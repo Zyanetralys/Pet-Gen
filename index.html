@@ -5,101 +5,148 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pet</title>
 <style>
-  :root{--bg:#0b0c10;--panel:#141619;--accent:#00ff41;--text:#8a8f98;--border:#2a2d32;--danger:#ff4444;--warn:#ffaa00}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:'Courier New',monospace;padding:1.5rem;min-height:100vh}
-  .container{max-width:800px;margin:0 auto}
-  h1{color:var(--accent);text-transform:uppercase;letter-spacing:3px;font-size:1.5rem;margin:0 0 1.2rem;border-bottom:1px solid var(--border);padding-bottom:.7rem;text-align:center}
+  :root{--bg:#0b0c10;--panel:#141619;--accent:#00ff41;--text:#8a8f98;--border:#2a2d32;--danger:#ff4444;--warn:#ffaa00;--info:#00ccff;--success:#00ff88}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Courier New',monospace;padding:1rem;min-height:100vh;line-height:1.4}
+  .container{max-width:900px;margin:0 auto}
   
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin:1rem 0}
-  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
-  label{display:block;margin-bottom:.3rem;font-size:.65rem;color:#556;text-transform:uppercase;letter-spacing:1px}
-  input,select{background:var(--panel);border:1px solid var(--border);color:var(--accent);padding:.5rem;width:100%;box-sizing:border-box;font-family:inherit;border-radius:2px}
-  input[type="color"]{height:36px;padding:2px;cursor:pointer}
-  input[type="range"]{width:100%;accent-color:var(--accent)}
+  /* Header */
+  h1{color:var(--accent);text-transform:uppercase;letter-spacing:4px;font-size:1.6rem;margin:0 0 1rem;text-align:center;text-shadow:0 0 10px var(--accent);animation:glow 2s ease-in-out infinite}
+  @keyframes glow{0%,100%{text-shadow:0 0 10px var(--accent)}50%{text-shadow:0 0 25px var(--accent),0 0 50px var(--accent)}}
   
-  button{background:#1a1d22;border:1px solid var(--accent);color:var(--accent);padding:.6rem;width:100%;font-weight:bold;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:all .2s;margin-top:.5rem;border-radius:2px}
-  button:hover{background:var(--accent);color:#000}
-  button:disabled{opacity:.5;cursor:not-allowed}
-  button.secondary{border-color:var(--border);color:var(--text);background:var(--panel)}
-  button.secondary:hover{border-color:var(--accent);color:var(--accent)}
-  button.danger{border-color:var(--danger);color:var(--danger)}
-  button.danger:hover{background:var(--danger);color:#000}
+  /* Grids */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin:.8rem 0}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}
+  label{display:block;margin-bottom:.25rem;font-size:.6rem;color:#556;text-transform:uppercase;letter-spacing:1px}
+  input,select{background:var(--panel);border:1px solid var(--border);color:var(--accent);padding:.4rem .5rem;width:100%;box-sizing:border-box;font-family:inherit;border-radius:2px;font-size:.85rem}
+  input[type="color"]{height:32px;padding:2px;cursor:pointer;border-radius:2px}
+  input[type="range"]{width:100%;accent-color:var(--accent);height:4px}
   
-  #preview{width:100%;height:300px;background:#0f1114;border:1px solid var(--border);position:relative;overflow:hidden;margin:1.2rem 0;border-radius:4px;transition:filter .3s}
-  #preview::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.4) 100%);pointer-events:none}
+  /* Buttons */
+  .btn{background:#1a1d22;border:1px solid var(--accent);color:var(--accent);padding:.5rem .8rem;font-weight:bold;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:all .15s;border-radius:2px;font-size:.75rem}
+  .btn:hover{background:var(--accent);color:#000;box-shadow:0 0 15px var(--accent)}
+  .btn:active{transform:scale(.98)}
+  .btn.secondary{border-color:var(--border);color:var(--text);background:var(--panel)}
+  .btn.secondary:hover{border-color:var(--info);color:var(--info)}
+  .btn.danger{border-color:var(--danger);color:var(--danger)}
+  .btn.danger:hover{background:var(--danger);color:#000}
+  .btn.pulse{animation:btnPulse 1.5s infinite}
+  @keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,65,.4)}50%{box-shadow:0 0 0 8px rgba(0,255,65,0)}}
   
-  #output-wrap{position:relative;background:#08090a;border:1px solid var(--border);padding:1rem;border-radius:4px}
-  #embed-text{margin:0;font-size:.6rem;color:#667;overflow-x:auto;white-space:pre-wrap;word-break:break-all;min-height:120px;max-height:200px;line-height:1.4}
+  /* Preview Area */
+  #preview{width:100%;height:320px;background:#0f1114;border:1px solid var(--border);position:relative;overflow:hidden;margin:1rem 0;border-radius:4px;transition:filter .3s,background .3s}
+  #preview::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.5) 100%);pointer-events:none}
+  #preview.rain::before{background:linear-gradient(transparent 95%,rgba(0,204,255,.1) 100%);animation:rainFall .3s linear infinite}
+  @keyframes rainFall{0%{background-position:0 0}100%{background-position:100px 100px}}
+  #preview.snow::before{background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.1) 0,transparent 50%);animation:snowFall 3s linear infinite}
+  @keyframes snowFall{0%{transform:translateY(-20px)}100%{transform:translateY(320px)}}
   
-  /* Pet UI Components */
-  .wp-ui{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);padding:6px 10px;border-radius:4px;font-size:.65rem;color:var(--accent);pointer-events:none;border:1px solid #333;min-width:200px;z-index:15}
-  .wp-stats{display:flex;gap:8px;flex-wrap:wrap}
-  .wp-stat{display:flex;align-items:center;gap:4px}
-  .wp-bar{width:40px;height:4px;background:#333;border-radius:2px;overflow:hidden}
-  .wp-bar-fill{height:100%;background:var(--accent);transition:width .2s,background .2s}
-  .wp-bar-fill.hunger{background:var(--accent)}
-  .wp-bar-fill.energy{background:var(--warn)}
-  .wp-bar-fill.health{background:var(--danger)}
+  /* Pet UI */
+  .wp-ui{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.8);padding:6px 10px;border-radius:4px;font-size:.6rem;color:var(--accent);pointer-events:none;border:1px solid #333;min-width:220px;z-index:15;backdrop-filter:blur(4px)}
+  .wp-stats{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .wp-stat{display:flex;align-items:center;gap:3px;font-size:.58rem}
+  .wp-bar{width:35px;height:3px;background:#222;border-radius:2px;overflow:hidden;position:relative}
+  .wp-bar-fill{height:100%;transition:width .25s ease,background .25s}
+  .wp-bar-fill.hunger{background:linear-gradient(90deg,var(--danger),var(--accent))}
+  .wp-bar-fill.energy{background:linear-gradient(90deg,var(--danger),var(--warn))}
+  .wp-bar-fill.health{background:linear-gradient(90deg,var(--danger),var(--success))}
+  .wp-bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shine 2s infinite}
+  @keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
   
-  .wp-pet{position:absolute;width:64px;height:56px;cursor:grab;--pc:#00ff41;transition:transform .1s,filter .2s;user-select:none;z-index:10}
-  .wp-pet:active{cursor:grabbing}
+  /* Pet Styles */
+  .wp-pet{position:absolute;width:64px;height:56px;cursor:grab;--pc:#00ff41;--glow:rgba(0,255,65,.5);transition:transform .1s,filter .2s;user-select:none;z-index:10;filter:drop-shadow(0 0 3px var(--glow))}
+  .wp-pet:active{cursor:grabbing;filter:drop-shadow(0 0 8px var(--pc))}
   .wp-pet svg{width:100%;height:100%;transition:fill .2s}
-  .wp-pet .eye{fill:#000;opacity:.85;transition:fill .2s}
-  .wp-pet:hover .eye{fill:var(--pc);opacity:1}
-  .wp-pet.hunt{filter:drop-shadow(0 0 8px var(--pc));animation:huntPulse .5s infinite alternate}
-  .wp-pet.sleep{opacity:.6;filter:grayscale(.6)}
-  .wp-pet.happy{animation:happyBounce .4s ease-in-out}
-  .wp-pet.angry{filter:drop-shadow(0 0 4px #ff4444)}
-  .wp-pet.sick{filter:grayscale(1) brightness(.8);opacity:.7}
+  .wp-pet .eye{fill:#000;opacity:.85;transition:all .2s}
+  .wp-pet:hover .eye{fill:var(--pc);opacity:1;filter:drop-shadow(0 0 3px var(--pc))}
+  .wp-pet.hunt{filter:drop-shadow(0 0 10px var(--pc));animation:huntPulse .4s infinite alternate}
+  .wp-pet.sleep{opacity:.65;filter:grayscale(.5) drop-shadow(0 0 2px #666)}
+  .wp-pet.happy{animation:happyBounce .35s ease-in-out}
+  .wp-pet.angry{filter:drop-shadow(0 0 5px #ff4444) hue-rotate(10deg)}
+  .wp-pet.sick{filter:grayscale(.9) brightness(.7) drop-shadow(0 0 3px #888)}
+  .wp-pet.legendary{filter:drop-shadow(0 0 8px gold) drop-shadow(0 0 15px gold);animation:legendaryGlow 1s ease-in-out infinite alternate}
+  @keyframes legendaryGlow{0%{filter:drop-shadow(0 0 8px gold)}100%{filter:drop-shadow(0 0 20px gold) drop-shadow(0 0 30px orange)}}
   .wp-pet .tail{transition:transform .2s}
-  .wp-pet.wag .tail{animation:wag .3s infinite alternate}
+  .wp-pet.wag .tail{animation:wag .25s infinite alternate}
   .wp-pet.idle{animation:breathe 3s infinite ease-in-out}
   
-  @keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}
-  @keyframes wag{0%{transform:rotate(-15deg)}100%{transform:rotate(15deg)}}
-  @keyframes huntPulse{0%{filter:drop-shadow(0 0 4px var(--pc))}100%{filter:drop-shadow(0 0 12px var(--pc))}}
-  @keyframes happyBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  @keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.05)}}
+  @keyframes wag{0%{transform:rotate(-12deg)}100%{transform:rotate(12deg)}}
+  @keyframes huntPulse{0%{filter:drop-shadow(0 0 6px var(--pc))}100%{filter:drop-shadow(0 0 15px var(--pc))}}
+  @keyframes happyBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
   
-  .float-text{position:absolute;color:#fff;font-weight:bold;font-size:.75rem;pointer-events:none;animation:floatUp .8s forwards;text-shadow:0 0 4px #000;z-index:20}
-  @keyframes floatUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-30px)}}
+  /* Effects */
+  .float-text{position:absolute;color:#fff;font-weight:bold;font-size:.7rem;pointer-events:none;animation:floatUp .7s forwards;text-shadow:0 0 5px #000;z-index:20}
+  @keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-35px) scale(1.1)}}
+  .particle{position:absolute;border-radius:50%;pointer-events:none;animation:particle .6s forwards}
+  @keyframes particle{0%{opacity:1;transform:scale(1) translate(0,0)}100%{opacity:0;transform:scale(0) translate(var(--dx),var(--dy))}}
+  .bubble{position:absolute;background:#fff;color:#000;padding:5px 10px;border-radius:10px;font-size:.65rem;max-width:130px;text-align:center;animation:bubbleFade 2s forwards;z-index:15;box-shadow:0 3px 12px rgba(0,0,0,.4);border:1px solid #ddd}
+  .bubble::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border-width:5px 5px 0;border-style:solid;border-color:#fff transparent transparent transparent}
+  @keyframes bubbleFade{0%{opacity:0;transform:translateY(8px) scale(.9)}10%{opacity:1;transform:translateY(0) scale(1)}90%{opacity:1}100%{opacity:0;transform:translateY(-12px) scale(.95)}}
   
-  .particle{position:absolute;width:4px;height:4px;background:var(--pc);border-radius:50%;pointer-events:none;animation:particle .6s forwards}
-  @keyframes particle{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0) translateY(-20px)}}
+  .weather{position:absolute;top:8px;right:8px;font-size:.65rem;color:#aaa;pointer-events:none;z-index:15;display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.6);padding:4px 8px;border-radius:4px;border:1px solid #333}
+  .weather-icon{font-size:1.1rem;animation:weatherAnim 3s ease-in-out infinite}
+  @keyframes weatherAnim{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
   
-  .bubble{position:absolute;background:#fff;color:#000;padding:4px 8px;border-radius:8px;font-size:.65rem;max-width:120px;text-align:center;animation:bubbleFade 2s forwards;z-index:15;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-  .bubble::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);border-width:4px 4px 0;border-style:solid;border-color:#fff transparent transparent transparent}
-  @keyframes bubbleFade{0%{opacity:0;transform:translateY(5px)}10%{opacity:1;transform:translateY(0)}90%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
+  .achievement{position:absolute;bottom:8px;left:8px;background:linear-gradient(135deg,#00ff4122,#00ff4144,#00ccff22);border:1px solid var(--accent);padding:5px 10px;font-size:.58rem;color:var(--accent);border-radius:4px;animation:achSlide .4s ease-out;z-index:25;backdrop-filter:blur(3px)}
+  @keyframes achSlide{0%{transform:translateX(-120%);opacity:0}100%{transform:translateX(0);opacity:1}}
   
-  .weather{position:absolute;top:8px;right:8px;font-size:.7rem;color:#888;pointer-events:none;z-index:15;display:flex;align-items:center;gap:4px}
-  .weather-icon{font-size:1rem}
+  .mini-map{position:absolute;bottom:8px;right:8px;width:90px;height:65px;background:rgba(0,0,0,.7);border:1px solid var(--border);border-radius:3px;overflow:hidden;z-index:15}
+  .mini-map::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 9px,rgba(0,255,65,.1) 10px);opacity:.3}
+  .mini-map-dot{position:absolute;width:4px;height:4px;background:var(--accent);border-radius:50%;box-shadow:0 0 6px var(--accent);transition:left .15s,top .15s}
   
-  .achievement{position:absolute;bottom:8px;left:8px;background:linear-gradient(90deg,#00ff4122,#00ff4144);border:1px solid var(--accent);padding:4px 8px;font-size:.6rem;color:var(--accent);border-radius:3px;animation:achSlide .5s ease-out;z-index:25}
-  @keyframes achSlide{0%{transform:translateX(-100%)}100%{transform:translateX(0)}}
-  
-  .action-bar{display:flex;gap:.5rem;margin:.8rem 0;flex-wrap:wrap}
-  .action-btn{flex:1;min-width:80px;padding:.4rem;font-size:.7rem}
-  
-  .status-indicator{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-  .status-online{background:var(--accent)}
-  .status-away{background:var(--warn)}
-  .status-offline{background:var(--danger)}
-  
-  .mini-map{position:absolute;bottom:8px;right:8px;width:80px;height:60px;background:rgba(0,0,0,.6);border:1px solid var(--border);border-radius:3px;overflow:hidden;z-index:15}
-  .mini-map-dot{position:absolute;width:3px;height:3px;background:var(--accent);border-radius:50%;transition:left .1s,top .1s}
-  
-  .save-indicator{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,255,65,.1);border:1px solid var(--accent);padding:2px 8px;font-size:.6rem;color:var(--accent);border-radius:3px;opacity:0;transition:opacity .3s;z-index:20}
+  .save-indicator{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,255,65,.15);border:1px solid var(--accent);padding:3px 12px;font-size:.58rem;color:var(--accent);border-radius:4px;opacity:0;transition:opacity .25s;z-index:20;animation:savePulse .3s ease-out}
+  @keyframes savePulse{0%{transform:translateX(-50%) scale(.9)}100%{transform:translateX(-50%) scale(1)}}
   .save-indicator.show{opacity:1}
   
-  .theme-preview{display:flex;gap:4px;margin-top:.3rem}
-  .theme-dot{width:16px;height:16px;border-radius:50%;border:1px solid #444;cursor:pointer;transition:transform .1s}
-  .theme-dot:hover{transform:scale(1.2)}
-  .theme-dot.active{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+  /* Action Bar */
+  .action-bar{display:flex;gap:.4rem;margin:.6rem 0;flex-wrap:wrap}
+  .action-btn{flex:1;min-width:70px;padding:.35rem .5rem;font-size:.65rem;border-radius:3px}
   
-  @media(max-width:600px){
+  /* Emote Wheel */
+  .emote-wheel{position:absolute;bottom:70px;right:20px;width:120px;height:120px;border-radius:50%;background:rgba(0,0,0,.85);border:2px solid var(--accent);display:none;flex-wrap:wrap;align-content:center;gap:2px;padding:5px;z-index:30;animation:wheelPop .2s ease-out}
+  .emote-wheel.active{display:flex}
+  @keyframes wheelPop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+  .emote-btn{width:32px;height:32px;border-radius:50%;border:1px solid #444;background:#1a1d22;color:var(--accent);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .emote-btn:hover{background:var(--accent);color:#000;transform:scale(1.1);border-color:var(--accent)}
+  
+  /* Accessories */
+  .accessory{position:absolute;pointer-events:none;z-index:12;transition:all .2s}
+  .acc-hat{top:-12px;left:50%;transform:translateX(-50%);font-size:1.2rem}
+  .acc-collar{bottom:8px;left:50%;transform:translateX(-50%);width:40px;height:8px;background:var(--accent);border-radius:4px;box-shadow:0 0 8px var(--accent)}
+  .acc-glow{position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 70%);animation:glowPulse 1.5s infinite;opacity:.6}
+  @keyframes glowPulse{0%,100%{opacity:.4}50%{opacity:.8}}
+  
+  /* Quest Panel */
+  .quest-panel{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);border:1px solid var(--info);padding:4px 10px;font-size:.58rem;color:var(--info);border-radius:4px;z-index:15;max-width:250px;text-align:center}
+  .quest-panel::before{content:'🎯';margin-right:4px}
+  
+  /* Output */
+  #output-wrap{position:relative;background:#08090a;border:1px solid var(--border);padding:1rem;border-radius:4px}
+  #embed-text{margin:0;font-size:.55rem;color:#556;overflow-x:auto;white-space:pre-wrap;word-break:break-all;min-height:100px;max-height:180px;line-height:1.3;background:#050607;padding:.6rem;border-radius:2px}
+  
+  /* Theme Dots */
+  .theme-preview{display:flex;gap:3px;margin-top:.25rem}
+  .theme-dot{width:14px;height:14px;border-radius:50%;border:1px solid #444;cursor:pointer;transition:all .15s;position:relative}
+  .theme-dot:hover{transform:scale(1.3);border-color:var(--accent)}
+  .theme-dot.active{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),0 0 10px var(--accent)}
+  
+  /* Status Badge */
+  .status-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:3px;font-size:.55rem;background:rgba(0,255,65,.1);border:1px solid var(--accent)}
+  .status-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:statusPulse 1.5s infinite}
+  @keyframes statusPulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,255,65,.6)}50%{opacity:.7;box-shadow:0 0 0 4px rgba(0,255,65,0)}}
+  
+  /* Responsive */
+  @media(max-width:700px){
     .grid{grid-template-columns:1fr 1fr}
-    .grid-3{grid-template-columns:1fr}
-    #preview{height:250px}
+    .grid-4{grid-template-columns:1fr 1fr}
+    #preview{height:280px}
+    .action-bar{gap:.3rem}
+    .action-btn{padding:.3rem;font-size:.6rem}
+  }
+  @media(max-width:450px){
+    .grid,.grid-4{grid-template-columns:1fr}
+    h1{font-size:1.3rem;letter-spacing:2px}
+    #preview{height:240px}
   }
 </style>
 </head>
@@ -107,71 +154,106 @@
 <div class="container">
   <h1>Pet</h1>
   
+  <!-- Configuration -->
   <div class="grid">
     <div><label>Callsign</label><input id="name" type="text" value="ALPHA_01" maxlength="12" pattern="[A-Za-z0-9_]+"></div>
-    <div><label>Color Táctico</label><input id="color" type="color" value="#00ff41"></div>
+    <div><label>Color</label><input id="color" type="color" value="#00ff41"></div>
     <div><label>Agresividad</label><select id="aggro">
-      <option value="low">Baja (Patrulla)</option>
-      <option value="med" selected>Media (Caza)</option>
-      <option value="high">Alta (Asalto)</option>
+      <option value="low">🛡️ Patrulla</option>
+      <option value="med" selected>🎯 Caza</option>
+      <option value="high">⚔️ Asalto</option>
     </select></div>
     <div><label>Tema</label><select id="theme">
       <option value="matrix">Matrix</option>
-      <option value="fire">Fuego</option>
-      <option value="ice">Hielo</option>
-      <option value="gold">Oro</option>
-      <option value="stealth">Stealth</option>
+      <option value="fire">🔥 Fuego</option>
+      <option value="ice">❄️ Hielo</option>
+      <option value="gold">⭐ Oro</option>
+      <option value="stealth">👁️ Stealth</option>
+      <option value="cyber">🌐 Cyber</option>
     </select></div>
   </div>
   
-  <div class="grid-3">
+  <div class="grid-4">
     <div><label>Tamaño</label><input id="size" type="range" min="40" max="100" value="64"></div>
-    <div><label>Vel. Animación</label><input id="animSpeed" type="range" min="0.5" max="2" step="0.1" value="1"></div>
-    <div><label>Sonidos</label><select id="sound">
-      <option value="on">Activados</option>
-      <option value="off" selected>Silencio</option>
+    <div><label>Velocidad</label><input id="animSpeed" type="range" min="0.5" max="2.5" step="0.1" value="1"></div>
+    <div><label>Accesorio</label><select id="accessory">
+      <option value="none">Ninguno</option>
+      <option value="hat">🎩 Sombrero</option>
+      <option value="collar">🔖 Collar</option>
+      <option value="glow">✨ Aura</option>
+    </select></div>
+    <div><label>Efectos</label><select id="effects">
+      <option value="none">Normal</option>
+      <option value="rain">🌧️ Lluvia</option>
+      <option value="snow">❄️ Nieve</option>
+      <option value="fog">🌫️ Niebla</option>
     </select></div>
   </div>
   
+  <!-- Actions -->
   <div class="action-bar">
     <button class="action-btn secondary" onclick="feedPet()">🍖 Alimentar</button>
     <button class="action-btn secondary" onclick="trainPet()">⚡ Entrenar</button>
     <button class="action-btn secondary" onclick="restPet()">😴 Descansar</button>
+    <button class="action-btn secondary" onclick="playMiniGame()">🎮 Jugar</button>
     <button class="action-btn danger" onclick="resetPet()">↺ Reset</button>
   </div>
   
-  <button onclick="generate()">▶ GENERAR EMBED</button>
+  <button class="btn pulse" onclick="generate()">▶ GENERAR EMBED ELITE</button>
   
+  <!-- Preview -->
   <div id="preview">
     <div class="save-indicator" id="save-indicator">✓ Auto-guardado</div>
+    
     <div class="wp-ui" id="preview-stats">
       <div class="wp-stats">
-        <div class="wp-stat"><span class="status-indicator status-online"></span><span id="stat-name">ALPHA_01</span></div>
-        <div class="wp-stat">LVL:<span id="stat-lvl">1</span></div>
-        <div class="wp-stat">XP:<span id="stat-xp">0</span></div>
+        <span class="status-badge"><span class="status-dot"></span><span id="stat-name">ALPHA_01</span></span>
+        <span>LVL:<b id="stat-lvl">1</b></span>
+        <span>XP:<b id="stat-xp">0</b></span>
+        <span id="stat-streak" style="display:none">🔥<b id="streak-count">0</b>d</span>
       </div>
-      <div style="margin-top:4px;display:flex;gap:8px;flex-wrap:wrap">
-        <div class="wp-stat"><span>H</span><div class="wp-bar"><div class="wp-bar-fill hunger" id="bar-hunger" style="width:100%"></div></div></div>
-        <div class="wp-stat"><span>E</span><div class="wp-bar"><div class="wp-bar-fill energy" id="bar-energy" style="width:100%"></div></div></div>
-        <div class="wp-stat"><span>♥</span><div class="wp-bar"><div class="wp-bar-fill health" id="bar-health" style="width:100%"></div></div></div>
+      <div style="margin-top:5px;display:flex;gap:8px;flex-wrap:wrap">
+        <div class="wp-stat"><span>🍖</span><div class="wp-bar"><div class="wp-bar-fill hunger" id="bar-hunger" style="width:100%"></div></div></div>
+        <div class="wp-stat"><span>⚡</span><div class="wp-bar"><div class="wp-bar-fill energy" id="bar-energy" style="width:100%"></div></div></div>
+        <div class="wp-stat"><span>❤️</span><div class="wp-bar"><div class="wp-bar-fill health" id="bar-health" style="width:100%"></div></div></div>
       </div>
-      <div style="margin-top:4px;font-size:.6rem">Estado: <span id="stat-mood">Neutral</span></div>
+      <div style="margin-top:4px;font-size:.55rem">Estado: <b id="stat-mood">Neutral</b> | Personalidad: <b id="stat-personality">Equilibrado</b></div>
     </div>
+    
+    <div class="quest-panel" id="quest-panel">Misión: Alcanza nivel 3</div>
     <div class="weather" id="preview-weather"><span class="weather-icon">☀️</span><span id="weather-text">Día</span></div>
+    
     <div id="preview-wolf" class="wp-pet idle"></div>
+    
+    <!-- Accessories container -->
+    <div id="accessories"></div>
+    
+    <!-- Emote wheel trigger -->
+    <button class="btn" style="position:absolute;bottom:8px;right:110px;padding:.25rem .5rem;font-size:.6rem" onclick="toggleEmoteWheel()">😊 Emotes</button>
+    <div class="emote-wheel" id="emote-wheel">
+      <button class="emote-btn" onclick="emote('happy')">😊</button>
+      <button class="emote-btn" onclick="emote('excited')">🤩</button>
+      <button class="emote-btn" onclick="emote('angry')">😠</button>
+      <button class="emote-btn" onclick="emote('sleepy')">😴</button>
+      <button class="emote-btn" onclick="emote('love')">😍</button>
+      <button class="emote-btn" onclick="emote('cool')">😎</button>
+    </div>
+    
     <div class="mini-map" id="mini-map"><div class="mini-map-dot" id="map-dot"></div></div>
   </div>
   
+  <!-- Output -->
   <div id="output-wrap">
-    <pre id="embed-text">[Pulsa "GENERAR EMBED" para crear tu código]</pre>
+    <pre id="embed-text">[Pulsa "GENERAR EMBED ELITE" para crear tu código premium]</pre>
   </div>
   
-  <div style="margin-top:1rem;font-size:.7rem;color:#556;text-align:center">
-    <small>💡 Tip: Arrastra la mascota para moverla. Click para interactuar. Los datos se guardan automáticamente en el embed generado.</small>
+  <div style="margin-top:.8rem;font-size:.65rem;color:#556;text-align:center">
+    <small>💡 Arrastra para mover • Click para interactuar • Rueda de emotes para acciones rápidas • Los datos se persisten en el embed</small>
   </div>
 </div>
 
 <script>
+  // === CONFIG & STATE ===
   const WOLF_SVG = `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
     <path d="M88 32 L78 18 L68 28 L58 12 L48 22 L38 8 L28 22 L18 12 L8 32 L18 48 L12 64 L28 58 L38 72 L52 76 L66 72 L76 58 L92 64 L88 48 Z" class="body"/>
     <circle cx="38" cy="36" r="2.5" class="eye"/>
@@ -181,65 +263,87 @@
   </svg>`;
 
   const THEMES = {
-    matrix: {color:'#00ff41',bg:'#0f1114',glow:'rgba(0,255,65,.3)'},
-    fire: {color:'#ff4400',bg:'#1a0a05',glow:'rgba(255,68,0,.3)'},
-    ice: {color:'#00ccff',bg:'#05101a',glow:'rgba(0,204,255,.3)'},
-    gold: {color:'#ffcc00',bg:'#1a1505',glow:'rgba(255,204,0,.3)'},
-    stealth: {color:'#666',bg:'#0a0a0f',glow:'rgba(100,100,100,.2)'}
+    matrix: {color:'#00ff41',bg:'#0f1114',glow:'rgba(0,255,65,.3)',particle:'#00ff41'},
+    fire: {color:'#ff4400',bg:'#1a0a05',glow:'rgba(255,68,0,.4)',particle:'#ff8844'},
+    ice: {color:'#00ccff',bg:'#05101a',glow:'rgba(0,204,255,.4)',particle:'#88ddff'},
+    gold: {color:'#ffcc00',bg:'#1a1505',glow:'rgba(255,204,0,.4)',particle:'#ffdd66'},
+    stealth: {color:'#666',bg:'#0a0a0f',glow:'rgba(100,100,100,.3)',particle:'#888'},
+    cyber: {color:'#ff00ff',bg:'#0f0a14',glow:'rgba(255,0,255,.4)',particle:'#ff66ff'}
   };
 
-  const MOODS = {Neutral:0,Happy:1,Angry:2,Excited:3,Sleepy:4,Hungry:5,Sick:6};
+  const PERSONALITIES = ['Equilibrado','Juguetón','Serio','Travieso','Leal','Independiente'];
+  const MOODS = {Neutral:0,Happy:1,Angry:2,Excited:3,Sleepy:4,Hungry:5,Sick:6,Loved:7};
   const VOICE_LINES = {
-    Neutral:['...','*sniff*','*observa*'],
-    Happy:['*mueve cola*','¡Buen trabajo!','*contento*'],
-    Angry:['*gruñe*','Grrr...','*muestra dientes*'],
-    Excited:['*ladra*','¡Vamos!','*energético*'],
+    Neutral:['...','*observa*','*sniff*'],
+    Happy:['*mueve cola*','¡Bien!','*contento*','*happy*'],
+    Angry:['*gruñe*','Grr...','*muestra dientes*'],
+    Excited:['*ladra*','¡Vamos!','*energético*','🔥'],
     Sleepy:['*zzz*','...cansado...','*bosteza*'],
-    Hungry:['*gime*','Comida...','*hambriento*'],
-    Sick:['*tos*','...mal...','*débil*']
+    Hungry:['*gime*','Comida...','🍖?'],
+    Sick:['*tos*','...mal...','*débil*'],
+    Loved:['*ronronea*','❤️','*se acerca*','*confía*']
   };
   
   const ACHIEVEMENTS = [
-    {id:'first_pet',name:'Primer Contacto',desc:'Interactúa con tu mascota'},
-    {id:'level_5',name:'Veterano',desc:'Alcanza nivel 5'},
-    {id:'level_10',name:'Alfa',desc:'Alcanza nivel 10'},
-    {id:'full_stats',name:'Óptimo',desc:'Mantén todas las barras al 100%'},
-    {id:'night_owl',name:'Nocturno',desc:'Juega de noche'},
-    {id:'clicks_50',name:'Dedicado',desc:'50 interacciones'},
-    {id:'survivor',name:'Superviviente',desc:'Mantén salud >50% por 2 min'}
+    {id:'first_pet',name:'Primer Contacto',desc:'Tu primera interacción',icon:'🎯'},
+    {id:'level_3',name:'Cadete',desc:'Alcanza nivel 3',icon:'⭐'},
+    {id:'level_5',name:'Veterano',desc:'Alcanza nivel 5',icon:'🎖️'},
+    {id:'level_10',name:'Alfa',desc:'Alcanza nivel 10',icon:'👑'},
+    {id:'full_stats',name:'Óptimo',desc:'Todas las barras al 100%',icon:'✨'},
+    {id:'night_owl',name:'Nocturno',desc:'Juega de noche',icon:'🌙'},
+    {id:'clicks_50',name:'Dedicado',desc:'50 interacciones',icon:'💪'},
+    {id:'streak_3',name:'Constante',desc:'3 días de racha',icon:'🔥'},
+    {id:'mini_game',name:'Gamers',desc:'Gana un mini-juego',icon:'🎮'},
+    {id:'legendary',name:'Legendario',desc:'Nivel 15 + todos los logros',icon:'🏆'}
   ];
 
+  const QUESTS = [
+    {id:'q1',text:'Alcanza nivel 3',target:{type:'lvl',val:3},reward:{xp:20}},
+    {id:'q2',text:'Mantén hambre >80% por 1min',target:{type:'hunger',val:80,time:60},reward:{xp:15,health:5}},
+    {id:'q3',text:'Interactúa 20 veces',target:{type:'clicks',val:20},reward:{xp:25}},
+    {id:'q4',text:'Juega de noche',target:{type:'night'},reward:{xp:10,unlock:'emote:cool'}}
+  ];
+
+  // DOM Elements
   const preview = document.getElementById('preview-wolf');
   const area = document.getElementById('preview');
+  const accContainer = document.getElementById('accessories');
   const mapDot = document.getElementById('map-dot');
-  let cfg = {name:'ALPHA_01',color:'#00ff41',aggro:'med',theme:'matrix',size:64,animSpeed:1,sound:'off'};
+  
+  // Config & State
+  let cfg = {name:'ALPHA_01',color:'#00ff41',aggro:'med',theme:'matrix',size:64,animSpeed:1,accessory:'none',effects:'none'};
   let state = { 
-    lvl:1, xp:0, hunger:100, energy:100, health:100, mood:'Neutral', 
+    lvl:1, xp:0, hunger:100, energy:100, health:100, mood:'Neutral', personality:'Equilibrado',
     pos:{x:100,y:100}, vel:{x:2,y:1}, dragging:false, dragOff:{x:0,y:0},
     huntMode:false, isNight:false, clickCount:0, playTime:0, lastInteraction:0,
-    achievements:[], isSick:false, cooldown:0
+    achievements:[], completedQuests:[], activeQuest:'q1', questProgress:0,
+    isSick:false, cooldown:0, streak:0, lastLogin:Date.now(), emoteCooldown:0
   };
-  let lastTime = 0, moodTimer = 0, weatherTimer = 0, saveTimer = 0;
-  let audioCtx = null;
+  let lastTime = 0, moodTimer = 0, weatherTimer = 0, saveTimer = 0, questTimer = 0;
+  let audioCtx = null, particles = [];
 
+  // === AUDIO SYSTEM ===
   function initAudio(){
-    if(cfg.sound==='off' || !window.AudioContext) return;
-    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(!window.AudioContext) return;
+    if(!audioCtx) audioCtx = new (AudioContext||webkitAudioContext)();
   }
-  
-  function playSound(freq=440,duration=0.1,type='sine'){
-    if(cfg.sound==='off' || !audioCtx) return;
+  function playSound(freq=440,duration=0.1,type='sine',volume=0.1){
+    if(!audioCtx) return;
     try{
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.connect(gain); gain.connect(audioCtx.destination);
       osc.frequency.value = freq; osc.type = type;
-      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.setValueAtTime(volume, audioCtx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
       osc.start(); osc.stop(audioCtx.currentTime + duration);
     }catch(e){}
   }
+  function playSequence(notes){
+    notes.forEach((n,i)=>setTimeout(()=>playSound(n.freq,n.dur,n.type,n.vol),i*80));
+  }
 
+  // === SYNC & RENDER ===
   function sync(){
     cfg.name = (document.getElementById('name').value.replace(/\s/g,'_')||'PET').substring(0,12);
     cfg.color = document.getElementById('color').value;
@@ -247,275 +351,327 @@
     cfg.theme = document.getElementById('theme').value;
     cfg.size = parseInt(document.getElementById('size').value);
     cfg.animSpeed = parseFloat(document.getElementById('animSpeed').value);
-    cfg.sound = document.getElementById('sound').value;
+    cfg.accessory = document.getElementById('accessory').value;
+    cfg.effects = document.getElementById('effects').value;
     
     const theme = THEMES[cfg.theme];
     preview.style.setProperty('--pc', cfg.color);
+    preview.style.setProperty('--glow', theme.glow);
     preview.style.setProperty('animation-duration', `${3/cfg.animSpeed}s`);
     area.style.background = theme.bg;
-    area.style.boxShadow = `inset 0 0 30px ${theme.glow}`;
+    area.style.boxShadow = `inset 0 0 40px ${theme.glow}`;
+    area.classList.remove('rain','snow','fog');
+    if(cfg.effects==='rain') area.classList.add('rain');
+    else if(cfg.effects==='snow') area.classList.add('snow');
+    else if(cfg.effects==='fog') area.style.filter = 'blur(1px) brightness(0.9)';
     
-    // FIX: Aplicar color directamente al SVG
     applyPetColor(cfg.color);
-    
-    // Actualizar UI
+    updateAccessories();
     document.getElementById('stat-name').textContent = cfg.name;
-    document.getElementById('preview-wolf').style.width = cfg.size+'px';
-    document.getElementById('preview-wolf').style.height = (cfg.size*0.875)+'px';
+    preview.style.width = cfg.size+'px';
+    preview.style.height = (cfg.size*0.875)+'px';
     updateStats();
     triggerSaveIndicator();
   }
 
   function applyPetColor(color){
-    // Aplicar color a todos los elementos SVG que lo necesiten
     const svg = preview.querySelector('svg');
     if(!svg) return;
-    svg.querySelectorAll('.body').forEach(el => el.style.fill = color);
-    svg.querySelectorAll('.eye').forEach(el => el.style.fill = '#000');
-    svg.querySelectorAll('.tail,.ear').forEach(el => {
-      el.style.stroke = color;
-      el.style.setProperty('currentColor', color);
-    });
-    // Fallback: establecer variable CSS y fill global
-    preview.style.setProperty('--pc', color);
+    svg.querySelectorAll('.body').forEach(el=>el.style.fill=color);
+    svg.querySelectorAll('.eye').forEach(el=>el.style.fill='#000');
+    svg.querySelectorAll('.tail,.ear').forEach(el=>{el.style.stroke=color;});
+    preview.style.setProperty('--pc',color);
     svg.style.fill = color;
+  }
+
+  function updateAccessories(){
+    accContainer.innerHTML = '';
+    if(cfg.accessory==='hat'){
+      const hat = document.createElement('div');
+      hat.className='accessory acc-hat'; hat.textContent='🎩';
+      accContainer.appendChild(hat);
+    } else if(cfg.accessory==='collar'){
+      const collar = document.createElement('div');
+      collar.className='accessory acc-collar'; collar.style.background=cfg.color; collar.style.boxShadow=`0 0 8px ${cfg.color}`;
+      accContainer.appendChild(collar);
+    } else if(cfg.accessory==='glow'){
+      const glow = document.createElement('div');
+      glow.className='accessory acc-glow'; glow.style.setProperty('--glow',cfg.color);
+      accContainer.appendChild(glow);
+    }
   }
 
   function updateStats(){
     document.getElementById('stat-lvl').textContent = state.lvl;
     document.getElementById('stat-xp').textContent = state.xp;
-    document.getElementById('bar-hunger').style.width = state.hunger+'%';
-    document.getElementById('bar-energy').style.width = state.energy+'%';
-    document.getElementById('bar-health').style.width = state.health+'%';
+    document.getElementById('bar-hunger').style.width = Math.max(0,state.hunger)+'%';
+    document.getElementById('bar-energy').style.width = Math.max(0,state.energy)+'%';
+    document.getElementById('bar-health').style.width = Math.max(0,state.health)+'%';
     document.getElementById('stat-mood').textContent = state.mood;
+    document.getElementById('stat-personality').textContent = state.personality;
     
-    // Actualizar colores de barras según estado
-    document.getElementById('bar-hunger').style.background = state.hunger<30 ? 'var(--danger)' : 'var(--accent)';
-    document.getElementById('bar-energy').style.background = state.energy<30 ? 'var(--danger)' : 'var(--warn)';
-    document.getElementById('bar-health').style.background = state.health<40 ? 'var(--danger)' : (state.health<70 ? 'var(--warn)' : 'var(--accent)');
+    // Streak display
+    const streakEl = document.getElementById('stat-streak');
+    if(state.streak>0){streakEl.style.display='inline';document.getElementById('streak-count').textContent=state.streak;}
+    else streakEl.style.display='none';
     
-    // Actualizar mini-mapa
-    const mx = area.clientWidth - 64, my = area.clientHeight - 56;
-    mapDot.style.left = (state.pos.x / mx * 74)+'px';
-    mapDot.style.top = (state.pos.y / my * 54)+'px';
+    // Bar colors dynamic
+    document.getElementById('bar-hunger').style.background = state.hunger<30?'linear-gradient(90deg,#f44,#0f4)':'';
+    document.getElementById('bar-energy').style.background = state.energy<30?'linear-gradient(90deg,#f44,#fa0)':'';
+    document.getElementById('bar-health').style.background = state.health<40?'linear-gradient(90deg,#f44,#0f8)':(state.health<70?'linear-gradient(90deg,#fa0,#0f8)':'');
+    
+    // Mini-map
+    const mx = area.clientWidth-64, my = area.clientHeight-56;
+    if(mx>0 && my>0){
+      mapDot.style.left = (state.pos.x/mx*84)+'px';
+      mapDot.style.top = (state.pos.y/my*59)+'px';
+    }
   }
 
   function triggerSaveIndicator(){
     const ind = document.getElementById('save-indicator');
     ind.classList.add('show');
-    setTimeout(()=>ind.classList.remove('show'), 1500);
+    setTimeout(()=>ind.classList.remove('show'),1200);
   }
 
-  function spawnParticle(x,y,color){
-    for(let i=0;i<5;i++){
-      const p=document.createElement('div');
-      p.className='particle';
-      p.style.left=(x+Math.random()*30)+'px';
-      p.style.top=(y+Math.random()*30)+'px';
-      p.style.setProperty('--pc', color||cfg.color);
-      area.appendChild(p);
-      setTimeout(()=>p.remove(),600);
-    }
+  // === PARTICLES & EFFECTS ===
+  function spawnParticle(x,y,color,dx,dy){
+    const p = document.createElement('div');
+    p.className='particle';
+    const size = 3+Math.random()*4;
+    p.style.cssText = `left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:${color||THEMES[cfg.theme].particle};--dx:${dx||Math.random()*40-20}px;--dy:${dy||-Math.random()*30-10}px`;
+    area.appendChild(p);
+    particles.push(p);
+    setTimeout(()=>{p.remove();particles=particles.filter(x=>x!==p)},600);
   }
-
+  
   function spawnFloat(txt,x,y,color){
-    const el=document.createElement('div');
-    el.className='float-text';
-    el.textContent=txt;
-    el.style.left=x+'px';
-    el.style.top=y+'px';
-    if(color) el.style.color=color;
-    area.appendChild(el);
-    setTimeout(()=>el.remove(),800);
+    const el = document.createElement('div');
+    el.className='float-text'; el.textContent=txt; el.style.cssText=`left:${x}px;top:${y}px;color:${color||'#fff'}`;
+    area.appendChild(el); setTimeout(()=>el.remove(),700);
   }
-
+  
   function spawnBubble(text,x,y){
-    const b=document.createElement('div');
-    b.className='bubble';
-    b.textContent=text;
-    b.style.left=(x-40)+'px';
-    b.style.top=(y-30)+'px';
-    area.appendChild(b);
-    setTimeout(()=>b.remove(),2000);
+    const b = document.createElement('div');
+    b.className='bubble'; b.textContent=text; b.style.cssText=`left:${x-50}px;top:${y-35}px`;
+    area.appendChild(b); setTimeout(()=>b.remove(),2000);
   }
 
+  // === ACHIEVEMENTS & QUESTS ===
   function unlockAchievement(id){
     if(state.achievements.includes(id)) return;
-    const ach = ACHIEVEMENTS.find(a=>a.id===id);
-    if(!ach) return;
+    const ach = ACHIEVEMENTS.find(a=>a.id===id); if(!ach) return;
     state.achievements.push(id);
-    const el=document.createElement('div');
-    el.className='achievement';
-    el.innerHTML=`🏆 ${ach.name}<br><small style="color:#888">${ach.desc}</small>`;
-    area.appendChild(el);
-    setTimeout(()=>el.remove(),3500);
-    playSound(660,0.15,'square');
+    const el = document.createElement('div');
+    el.className='achievement'; el.innerHTML = `${ach.icon} <b>${ach.name}</b><br><small style="color:#888">${ach.desc}</small>`;
+    area.appendChild(el); setTimeout(()=>el.remove(),4000);
+    playSequence([{freq:660,dur:0.1,type:'square',vol:0.15},{freq:880,dur:0.15,type:'square',vol:0.1}]);
+    // Check legendary
+    if(state.achievements.length>=9 && state.lvl>=15) unlockAchievement('legendary');
+  }
+  
+  function updateQuests(){
+    const quest = QUESTS.find(q=>q.id===state.activeQuest); if(!quest) return;
+    let progress = false;
+    if(quest.target.type==='lvl' && state.lvl>=quest.target.val) progress=true;
+    if(quest.target.type==='clicks' && state.clickCount>=quest.target.val) progress=true;
+    if(quest.target.type==='night' && state.isNight && state.clickCount>5) progress=true;
+    if(quest.target.type==='hunger' && state.hunger>=quest.target.val){
+      state.questProgress += 0.16; // ~1sec
+      if(state.questProgress>=1) progress=true;
+    }
+    if(progress && !state.completedQuests.includes(quest.id)){
+      state.completedQuests.push(quest.id);
+      if(quest.reward.xp) state.xp += quest.reward.xp;
+      if(quest.reward.health) state.health = Math.min(100,state.health+quest.reward.health);
+      spawnFloat('🎯 MISIÓN COMPLETA +'+(quest.reward.xp||0)+'XP', state.pos.x, state.pos.y-40, '#0cf');
+      playSequence([{freq:523,dur:0.1},{freq:659,dur:0.1},{freq:784,dur:0.2}]);
+      // Next quest
+      const idx = QUESTS.findIndex(q=>q.id===state.activeQuest);
+      state.activeQuest = QUESTS[(idx+1)%QUESTS].id;
+      state.questProgress = 0;
+      updateQuestPanel();
+      checkLevelUp();
+    }
+  }
+  
+  function updateQuestPanel(){
+    const quest = QUESTS.find(q=>q.id===state.activeQuest);
+    const panel = document.getElementById('quest-panel');
+    if(quest){
+      panel.style.display = 'block';
+      panel.textContent = `🎯 ${quest.text}` + (quest.target.time?` (${Math.ceil((1-state.questProgress)*quest.target.time)}s)`:``);
+    } else panel.style.display = 'none';
   }
 
+  // === MOOD & BEHAVIOR ===
   function changeMood(newMood){
-    if(state.mood === newMood && newMood!=='Neutral') return;
+    if(state.mood===newMood && !['Happy','Angry','Excited'].includes(newMood)) return;
     state.mood = newMood;
-    preview.classList.remove('happy','angry','sleep','sick');
+    preview.classList.remove('happy','angry','sleep','sick','legendary');
     
-    if(newMood==='Happy') {preview.classList.add('happy'); playSound(520,0.08);}
-    else if(newMood==='Angry') {preview.classList.add('angry'); playSound(180,0.1,'sawtooth');}
-    else if(newMood==='Sleepy' || newMood==='Hungry') preview.classList.add('sleep');
-    else if(newMood==='Sick') {preview.classList.add('sick'); playSound(120,0.2,'sine');}
+    if(newMood==='Happy'){preview.classList.add('happy'); playSound(520,0.08,'sine',0.08);}
+    else if(newMood==='Angry'){preview.classList.add('angry'); playSound(180,0.12,'sawtooth',0.1);}
+    else if(newMood==='Excited'){preview.classList.add('hunt'); playSound(660,0.06,'triangle',0.1);}
+    else if(newMood==='Sleepy'||newMood==='Hungry') preview.classList.add('sleep');
+    else if(newMood==='Sick'){preview.classList.add('sick'); playSound(120,0.2,'sine',0.08);}
+    else if(newMood==='Loved'){spawnBubble('❤️',state.pos.x+32,state.pos.y); playSound(440,0.15,'sine',0.12);}
     else preview.classList.add('idle');
   }
 
-  function feedPet(){
-    if(state.cooldown>0 || state.hunger>=100) return;
-    state.hunger = Math.min(100, state.hunger+25);
-    state.energy = Math.max(0, state.energy-5);
-    state.xp += 8;
-    changeMood('Happy');
-    spawnBubble('¡Ñam!', state.pos.x+32, state.pos.y);
-    spawnFloat('+25H', state.pos.x+10, state.pos.y-10, '#00ff41');
-    playSound(340,0.1);
-    state.cooldown = 2;
-    checkLevelUp();
+  function updatePersonality(){
+    // Personality shifts based on behavior patterns
+    if(state.clickCount>30 && state.hunger>80) state.personality='Juguetón';
+    else if(state.energy<30 && state.hunger<30) state.personality='Serio';
+    else if(state.lvl>=5 && state.achievements.length>=3) state.personality='Leal';
+    else if(Math.random()<0.002) state.personality=PERSONALITIES[Math.floor(Math.random()*PERSONALITIES.length)];
+    document.getElementById('stat-personality').textContent = state.personality;
   }
 
-  function trainPet(){
-    if(state.cooldown>0 || state.energy<15) return;
-    state.energy = Math.max(0, state.energy-20);
-    state.hunger = Math.max(0, state.hunger-10);
-    state.xp += 25;
-    changeMood('Excited');
-    spawnBubble('¡Entrenando!', state.pos.x+32, state.pos.y);
-    spawnFloat('+25XP', state.pos.x+10, state.pos.y-10, '#00ff41');
-    playSound(440,0.1,'triangle');
-    state.cooldown = 3;
-    checkLevelUp();
+  // === ACTIONS ===
+  function feedPet(){ if(state.cooldown>0||state.hunger>=100) return;
+    state.hunger=Math.min(100,state.hunger+30); state.energy=Math.max(0,state.energy-8); state.xp+=10;
+    changeMood('Happy'); spawnBubble('¡Ñam! 🍖',state.pos.x+32,state.pos.y);
+    spawnFloat('+30H',state.pos.x+10,state.pos.y-10,'#0f4'); playSound(340,0.1,'sine',0.1);
+    state.cooldown=2.5; state.questProgress=0; checkLevelUp(); updateQuests();
   }
-
-  function restPet(){
-    if(state.cooldown>0) return;
-    state.energy = Math.min(100, state.energy+30);
-    state.health = Math.min(100, state.health+10);
-    changeMood('Sleepy');
-    spawnBubble('Zzz...', state.pos.x+32, state.pos.y);
-    spawnFloat('+30E', state.pos.x+10, state.pos.y-10, '#ffaa00');
-    playSound(220,0.15,'sine');
-    state.cooldown = 2.5;
+  function trainPet(){ if(state.cooldown>0||state.energy<20) return;
+    state.energy=Math.max(0,state.energy-25); state.hunger=Math.max(0,state.hunger-12); state.xp+=30;
+    changeMood('Excited'); spawnBubble('¡Entrenando! ⚡',state.pos.x+32,state.pos.y);
+    spawnFloat('+30XP',state.pos.x+10,state.pos.y-10,'#0cf'); playSequence([{freq:440,dur:0.08},{freq:550,dur:0.08}]);
+    state.cooldown=3.5; checkLevelUp(); updateQuests();
   }
-
-  function resetPet(){
-    if(!confirm('¿Resetear mascota a estado inicial?')) return;
-    state = {...state, lvl:1, xp:0, hunger:100, energy:100, health:100, mood:'Neutral', pos:{x:100,y:100}, achievements:[]};
-    changeMood('Neutral');
-    updateStats();
-    spawnFloat('RESET', area.clientWidth/2, area.clientHeight/2, '#ff4444');
-    playSound(100,0.3,'sawtooth');
+  function restPet(){ if(state.cooldown>0) return;
+    state.energy=Math.min(100,state.energy+40); state.health=Math.min(100,state.health+15);
+    changeMood('Sleepy'); spawnBubble('Zzz... 😴',state.pos.x+32,state.pos.y);
+    spawnFloat('+40E',state.pos.x+10,state.pos.y-10,'#fa0'); playSound(220,0.2,'sine',0.08);
+    state.cooldown=3;
+  }
+  function playMiniGame(){ if(state.cooldown>0||state.energy<15) return;
+    state.energy-=20; state.xp+=15; changeMood('Excited');
+    spawnFloat('🎮 +15XP',state.pos.x+10,state.pos.y-10,'#f0f');
+    playSequence([{freq:330,dur:0.05},{freq:440,dur:0.05},{freq:550,dur:0.05},{freq:660,dur:0.1}]);
+    unlockAchievement('mini_game'); state.cooldown=4; checkLevelUp();
+  }
+  function emote(type){ if(state.emoteCooldown>0) return;
+    const emotes = {happy:'Happy',excited:'Excited',angry:'Angry',sleepy:'Sleepy',love:'Loved',cool:'Neutral'};
+    changeMood(emotes[type]||'Neutral');
+    if(type==='love') spawnBubble('❤️',state.pos.x+32,state.pos.y);
+    playSound(440+Math.random()*200,0.08,'sine',0.1);
+    state.emoteCooldown=1; setTimeout(()=>state.emoteCooldown=0,1000);
+    toggleEmoteWheel();
+  }
+  function toggleEmoteWheel(){ document.getElementById('emote-wheel').classList.toggle('active'); }
+  function resetPet(){ if(!confirm('¿Resetear mascota?')) return;
+    state = {...state,lvl:1,xp:0,hunger:100,energy:100,health:100,mood:'Neutral',pos:{x:100,y:100},achievements:[],completedQuests:[],activeQuest:'q1',clickCount:0,streak:0};
+    changeMood('Neutral'); updateStats(); updateQuestPanel();
+    spawnFloat('↺ RESET',area.clientWidth/2,area.clientHeight/2,'#f44');
+    playSound(100,0.3,'sawtooth',0.15);
   }
 
   function checkLevelUp(){
-    if(state.xp >= state.lvl * 50){
-      state.lvl++;
-      state.xp = 0;
-      spawnFloat('¡NIVEL UP!', state.pos.x+10, state.pos.y-30, '#00ff41');
-      for(let i=0;i<15;i++) setTimeout(()=>spawnParticle(state.pos.x+32, state.pos.y+28), i*40);
-      playSound(880,0.2,'square');
+    if(state.xp >= state.lvl*50){
+      state.lvl++; state.xp=0;
+      spawnFloat('⭐ NIVEL '+state.lvl+'!',state.pos.x+5,state.pos.y-35,'#ff0');
+      for(let i=0;i<20;i++) setTimeout(()=>spawnParticle(state.pos.x+32,state.pos.y+28,THEMES[cfg.theme].particle,Math.random()*60-30,-Math.random()*50-20),i*30);
+      playSequence([{freq:523,dur:0.1},{freq:659,dur:0.1},{freq:784,dur:0.1},{freq:1047,dur:0.2}]);
+      if(state.lvl===3) unlockAchievement('level_3');
       if(state.lvl===5) unlockAchievement('level_5');
       if(state.lvl===10) unlockAchievement('level_10');
+      updateQuestPanel();
     }
   }
 
-  // Event listeners para inputs
+  // === EVENT LISTENERS ===
   ['input','change'].forEach(e=>{
     document.querySelectorAll('input,select').forEach(i=>i.addEventListener(e,()=>{sync(); initAudio();}));
   });
 
+  // === MAIN LOOP ===
   function startPreview(){
-    preview.innerHTML = WOLF_SVG;
-    applyPetColor(cfg.color);
+    preview.innerHTML = WOLF_SVG; applyPetColor(cfg.color); updateAccessories();
     state.pos = {x:area.clientWidth/2-32, y:area.clientHeight/2-28};
+    updateQuestPanel();
+    
+    // Daily streak check
+    const today = new Date().toDateString();
+    const last = new Date(state.lastLogin).toDateString();
+    if(today!==last){
+      const diff = Math.floor((Date.now()-state.lastLogin)/86400000);
+      state.streak = diff===1 ? state.streak+1 : (diff>1 ? 0 : state.streak);
+      state.lastLogin = Date.now();
+      if(state.streak>=3) unlockAchievement('streak_3');
+    }
     
     function loop(now){
-      const dt = Math.min((now-lastTime)/1000, 0.1);
-      lastTime = now;
-      state.playTime += dt;
-      if(state.cooldown>0) state.cooldown -= dt;
+      const dt = Math.min((now-lastTime)/1000, 0.1); lastTime = now;
+      state.playTime += dt; if(state.cooldown>0) state.cooldown -= dt; if(state.emoteCooldown>0) state.emoteCooldown -= dt;
       
       if(!state.dragging){
-        const speed = (cfg.aggro==='high'?180:cfg.aggro==='med'?120:70) * cfg.animSpeed;
-        const changeChance = (cfg.aggro==='high'?0.02:cfg.aggro==='med'?0.012:0.006) * cfg.animSpeed;
+        const speed = ({high:200,med:130,low:75}[cfg.aggro]||130) * cfg.animSpeed;
+        const changeChance = ({high:0.025,med:0.015,low:0.008}[cfg.aggro]||0.015) * cfg.animSpeed;
         
         if(Math.random()<changeChance){
-          state.vel.x = (Math.random()-.5)*speed;
-          state.vel.y = (Math.random()-.5)*speed;
-          state.huntMode = Math.random()<0.3;
-          preview.classList.toggle('hunt', state.huntMode && !preview.classList.contains('sleep'));
+          state.vel.x=(Math.random()-.5)*speed; state.vel.y=(Math.random()-.5)*speed;
+          state.huntMode=Math.random()<0.35; preview.classList.toggle('hunt',state.huntMode&&!preview.classList.contains('sleep'));
         }
-        
-        state.pos.x += state.vel.x * dt;
-        state.pos.y += state.vel.y * dt;
-        
+        state.pos.x+=state.vel.x*dt; state.pos.y+=state.vel.y*dt;
         const mx=area.clientWidth-64, my=area.clientHeight-56;
-        if(state.pos.x<=0){state.pos.x=0;state.vel.x*=-1}
-        if(state.pos.x>=mx){state.pos.x=mx;state.vel.x*=-1}
-        if(state.pos.y<=0){state.pos.y=0;state.vel.y*=-1}
-        if(state.pos.y>=my){state.pos.y=my;state.vel.y*=-1}
+        if(state.pos.x<=0||state.pos.x>=mx){state.pos.x=Math.max(0,Math.min(mx,state.pos.x));state.vel.x*=-1}
+        if(state.pos.y<=0||state.pos.y>=my){state.pos.y=Math.max(0,Math.min(my,state.pos.y));state.vel.y*=-1}
         
-        // Sistema de estadísticas
-        const decay = cfg.aggro==='high' ? 2.5 : cfg.aggro==='med' ? 1.5 : 0.8;
+        // Stats decay/gain
+        const decay = ({high:2.8,med:1.6,low:0.9}[cfg.aggro]||1.6);
         state.hunger = Math.max(0, state.hunger - dt*decay);
-        state.energy = Math.max(0, state.energy - dt*decay*0.7);
+        state.energy = Math.max(0, state.energy - dt*decay*0.75);
+        if(state.hunger<25||state.energy<25) state.health = Math.max(0, state.health - dt*0.6);
+        else if(state.hunger>75&&state.energy>75) state.health = Math.min(100, state.health + dt*0.4);
         
-        // Salud: baja si hambre o energía muy bajas
-        if(state.hunger<20 || state.energy<20) state.health = Math.max(0, state.health - dt*0.5);
-        else if(state.hunger>80 && state.energy>80) state.health = Math.min(100, state.health + dt*0.3);
+        // Random sickness
+        if(state.health<35 && Math.random()<0.003 && !state.isSick){state.isSick=true; changeMood('Sick');}
+        if(state.health>60 && state.isSick && Math.random()<0.01){state.isSick=false; changeMood('Neutral');}
         
-        // Enfermedad aleatoria si salud baja
-        if(state.health<30 && Math.random()<0.002 && !state.isSick){
-          state.isSick = true;
-          changeMood('Sick');
-          unlockAchievement('survivor');
-        }
-        
-        // Sistema de estado de ánimo
+        // Mood system
         moodTimer += dt;
-        if(moodTimer > 6/cfg.animSpeed){
-          moodTimer = 0;
+        if(moodTimer > 5/cfg.animSpeed){
+          moodTimer=0;
           if(state.isSick) changeMood('Sick');
-          else if(state.hunger<25) changeMood('Hungry');
-          else if(state.energy<20) changeMood('Sleepy');
-          else if(state.health<50) changeMood('Sick');
-          else if(Math.random()<0.35) changeMood('Happy');
-          else if(Math.random()<0.15) changeMood('Angry');
+          else if(state.hunger<30) changeMood('Hungry');
+          else if(state.energy<25) changeMood('Sleepy');
+          else if(state.health<45) changeMood('Sick');
+          else if(Math.random()<0.4) changeMood('Happy');
+          else if(Math.random()<0.18) changeMood('Angry');
           else changeMood('Neutral');
-          
-          // Burbuja de voz
-          if(!preview.classList.contains('sleep') && Math.random()<0.4){
-            const lines = VOICE_LINES[state.mood]||VOICE_LINES.Neutral;
+          if(!preview.classList.contains('sleep') && Math.random()<0.45){
+            const lines=VOICE_LINES[state.mood]||VOICE_LINES.Neutral;
             spawnBubble(lines[Math.floor(Math.random()*lines.length)], state.pos.x+32, state.pos.y);
           }
         }
         
-        // Ciclo día/noche
+        // Weather cycle
         weatherTimer += dt;
-        if(weatherTimer > 25){
-          weatherTimer = 0;
-          state.isNight = !state.isNight;
-          document.getElementById('weather-text').textContent = state.isNight?'Noche':'Día';
-          document.querySelector('.weather-icon').textContent = state.isNight?'🌙':'☀️';
-          area.style.filter = state.isNight?'brightness(0.65)':'brightness(1)';
+        if(weatherTimer > 22){
+          weatherTimer=0; state.isNight=!state.isNight;
+          document.getElementById('weather-text').textContent=state.isNight?'Noche':'Día';
+          document.querySelector('.weather-icon').textContent=state.isNight?'🌙':'☀️';
+          area.style.filter = state.isNight && cfg.effects!=='fog' ? 'brightness(0.62)' : (cfg.effects==='fog'?'blur(1px) brightness(0.85)':'brightness(1)');
           if(state.isNight) unlockAchievement('night_owl');
         }
         
-        // Actualizar visual
-        preview.style.left = state.pos.x+'px';
-        preview.style.top = state.pos.y+'px';
-        preview.style.transform = `scaleX(${state.vel.x>=0?1:-1})`;
-        preview.classList.toggle('idle', Math.abs(state.vel.x)<15 && !state.huntMode && !preview.classList.contains('sleep'));
+        // Quest & personality updates
+        questTimer += dt; if(questTimer>1){questTimer=0; updateQuests(); updatePersonality();}
         
-        // Auto-guardado visual cada 10s
-        saveTimer += dt;
-        if(saveTimer > 10){
-          saveTimer = 0;
-          triggerSaveIndicator();
-        }
+        // Visual updates
+        preview.style.left=state.pos.x+'px'; preview.style.top=state.pos.y+'px';
+        preview.style.transform=`scaleX(${state.vel.x>=0?1:-1})`;
+        preview.classList.toggle('idle',Math.abs(state.vel.x)<18&&!state.huntMode&&!preview.classList.contains('sleep'));
+        
+        // Auto-save visual
+        saveTimer+=dt; if(saveTimer>8){saveTimer=0; triggerSaveIndicator();}
+        
+        // Particle rain/snow
+        if(cfg.effects==='rain' && Math.random()<0.1) spawnParticle(Math.random()*300, -10, '#88dfff', Math.random()*4-2, 25+Math.random()*10);
+        if(cfg.effects==='snow' && Math.random()<0.05) spawnParticle(Math.random()*300, -10, '#fff', Math.random()*2-1, 8+Math.random()*5);
         
         updateStats();
       }
@@ -524,102 +680,83 @@
     requestAnimationFrame(loop);
   }
 
-  // Controles de arrastre
+  // === DRAG & CLICK HANDLERS ===
   preview.addEventListener('mousedown',e=>{
-    if(e.target.closest('.wp-ui') || e.target.closest('.weather')) return;
-    state.dragging=true;
-    const r=area.getBoundingClientRect();
-    state.dragOff = {x:e.clientX-r.left-state.pos.x, y:e.clientY-r.top-state.pos.y};
-    preview.style.transition='none';
-    preview.classList.remove('idle');
-    initAudio();
+    if(e.target.closest('.wp-ui')||e.target.closest('.weather')||e.target.closest('.emote-btn')||e.target.closest('.action-btn')) return;
+    state.dragging=true; const r=area.getBoundingClientRect();
+    state.dragOff={x:e.clientX-r.left-state.pos.x, y:e.clientY-r.top-state.pos.y};
+    preview.style.transition='none'; preview.classList.remove('idle'); initAudio();
   });
-  
   window.addEventListener('mouseup',()=>{
-    if(state.dragging){
-      state.dragging=false;
-      preview.style.transition=`transform .1s, filter .2s`;
-      state.vel = {x:(Math.random()-.5)*50, y:(Math.random()-.5)*50};
-    }
+    if(state.dragging){state.dragging=false; preview.style.transition=`transform .1s,filter .2s`;
+    state.vel={x:(Math.random()-.5)*55,y:(Math.random()-.5)*55};}});
+  window.addEventListener('mousemove',e=>{
+    if(!state.dragging)return; const r=area.getBoundingClientRect();
+    state.pos.x=Math.max(0,Math.min(area.clientWidth-64,e.clientX-r.left-state.dragOff.x));
+    state.pos.y=Math.max(0,Math.min(area.clientHeight-56,e.clientY-r.top-state.dragOff.y));
+    preview.style.left=state.pos.x+'px'; preview.style.top=state.pos.y+'px';
   });
   
-  window.addEventListener('mousemove',e=>{
-    if(!state.dragging)return;
-    const r=area.getBoundingClientRect();
-    state.pos.x = Math.max(0, Math.min(area.clientWidth-64, e.clientX-r.left-state.dragOff.x));
-    state.pos.y = Math.max(0, Math.min(area.clientHeight-56, e.clientY-r.top-state.dragOff.y));
-    preview.style.left = state.pos.x+'px';
-    preview.style.top = state.pos.y+'px';
-  });
-
-  // Interacción con click
   preview.addEventListener('click',e=>{
-    if(state.dragging || state.cooldown>0) return;
-    const rect=preview.getBoundingClientRect();
-    const x=e.clientX-rect.left;
-    const y=e.clientY-rect.top;
-    
-    state.clickCount++;
-    if(state.clickCount>=50) unlockAchievement('clicks_50');
+    if(state.dragging||state.cooldown>0||e.target.closest('.emote-btn')) return;
+    state.clickCount++; if(state.clickCount>=50) unlockAchievement('clicks_50');
     if(state.clickCount===1) unlockAchievement('first_pet');
     
-    spawnParticle(x+state.pos.x, y+state.pos.y, cfg.color);
+    spawnParticle(state.pos.x+32,state.pos.y+28,THEMES[cfg.theme].particle,Math.random()*30-15,-Math.random()*25-10);
     initAudio();
     
     const actions = [
-      {t:'CARICIA +5XP',xp:5,h:-3,e:4,m:'Happy',v:'*contento*',s:520},
-      {t:'JUGAR +12',xp:12,h:-8,e:-10,m:'Excited',v:'¡Vamos!',s:660},
-      {t:'ORDEN +8',xp:8,h:-5,e:-6,m:'Neutral',v:'*atento*',s:380}
+      {t:'CARICIA +5XP',xp:5,h:-4,e:5,m:'Happy',v:'*contento*',s:520},
+      {t:'JUGAR +12',xp:12,h:-10,e:-12,m:'Excited',v:'¡Vamos! 🔥',s:660},
+      {t:'ORDEN +8',xp:8,h:-6,e:-8,m:'Neutral',v:'*atento*',s:380},
+      {t:'CUIDAR +10',xp:10,h:5,e:-5,health:3,m:'Loved',v:'❤️',s:440}
     ];
     const act = actions[Math.floor(Math.random()*actions.length)];
     
-    state.xp += act.xp;
-    state.hunger = Math.max(0, state.hunger+act.h);
-    state.energy = Math.max(0, state.energy+act.e);
-    if(state.energy>85) state.health = Math.min(100, state.health+2);
+    state.xp+=act.xp; state.hunger=Math.max(0,state.hunger+(act.h||0)); state.energy=Math.max(0,state.energy+(act.e||0));
+    if(act.health) state.health=Math.min(100,state.health+act.health);
+    if(state.energy>80) state.health=Math.min(100,state.health+1);
     
-    changeMood(act.m);
-    if(act.v) spawnBubble(act.v, state.pos.x+32, state.pos.y);
-    playSound(act.s, 0.08);
+    changeMood(act.m); if(act.v) spawnBubble(act.v, state.pos.x+32, state.pos.y);
+    playSound(act.s,0.09,'sine',0.1);
     
-    if(state.xp >= state.lvl*50){
-      checkLevelUp();
-    } else {
-      spawnFloat(act.t, state.pos.x+10, state.pos.y-10, '#fff');
-    }
+    if(state.xp>=state.lvl*50) checkLevelUp();
+    else spawnFloat(act.t, state.pos.x+10, state.pos.y-10, '#fff');
     
-    preview.classList.add('wag');
-    setTimeout(()=>preview.classList.remove('wag'),600);
-    state.cooldown = 0.8;
-    updateStats();
+    preview.classList.add('wag'); setTimeout(()=>preview.classList.remove('wag'),500);
+    state.cooldown=0.9; state.questProgress=0; updateQuests(); updateStats();
   });
-  
+
+  // Close emote wheel on outside click
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.emote-wheel') && !e.target.closest('[onclick="toggleEmoteWheel()"]')){
+      document.getElementById('emote-wheel').classList.remove('active');
+    }
+  });
+
+  // === EMBED GENERATOR ===
   function generate(){
     sync();
-    const safe = cfg.name.replace(/[^a-zA-Z0-9_]/g,'_').substring(0,12) || 'PET';
+    const safe = cfg.name.replace(/[^a-zA-Z0-9_]/g,'_').substring(0,12)||'PET';
     const theme = THEMES[cfg.theme];
-    const speed = (cfg.aggro==='high'?220:cfg.aggro==='med'?140:80) * cfg.animSpeed;
-    const changeRate = (cfg.aggro==='high'?0.025:cfg.aggro==='med'?0.015:0.008) * cfg.animSpeed;
+    const speed = ({high:240,med:150,low:85}[cfg.aggro]||150)*cfg.animSpeed;
+    const changeRate = ({high:0.03,med:0.018,low:0.01}[cfg.aggro]||0.018)*cfg.animSpeed;
     const petSize = cfg.size;
+    const acc = cfg.accessory;
     
-    const embed = `<!-- PET WIDGET v4 -->
-<style>.w-h{position:fixed;bottom:20px;right:20px;width:320px;height:220px;background:${theme.bg};border:1px solid #333;overflow:hidden;z-index:9999;font-family:monospace;box-shadow:inset 0 0 30px ${theme.glow}}.w-p{position:absolute;width:${petSize}px;height:${petSize*0.875}px;cursor:grab;--pc:${cfg.color};transition:transform .1s,filter .2s;user-select:none}.w-p:active{cursor:grabbing}.w-p svg{width:100%;height:100%;fill:var(--pc)}.w-p .eye{fill:#000;opacity:.85}.w-p:hover .eye{fill:var(--pc);opacity:1}.w-p.hunt{filter:drop-shadow(0 0 8px var(--pc));animation:hp .5s infinite alternate}.w-p.sleep{opacity:.6;filter:grayscale(.6)}.w-p.happy{animation:hb .4s ease-in-out}.w-p.angry{filter:drop-shadow(0 0 4px #f44)}.w-p.wag .tail{animation:wag .3s infinite alternate}.w-p.idle{animation:br 3s infinite ease-in-out}@keyframes hp{0%{filter:drop-shadow(0 0 4px var(--pc))}100%{filter:drop-shadow(0 0 12px var(--pc))}}@keyframes hb{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes wag{0%{transform:rotate(-15deg)}100%{transform:rotate(15deg)}}@keyframes br{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}.w-ui{position:absolute;top:6px;left:6px;background:#000d;padding:4px 8px;font-size:.6rem;color:${theme.color};border-radius:3px;border:1px solid #333;z-index:15}.w-wx{position:absolute;top:6px;right:6px;font-size:.65rem;color:#888;z-index:15}.w-ft{position:absolute;color:#fff;font-weight:bold;font-size:.7rem;pointer-events:none;animation:fu .7s forwards;text-shadow:0 0 4px #000;z-index:20}@keyframes fu{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-25px)}}.w-pt{position:absolute;width:4px;height:4px;background:var(--pc);border-radius:50%;pointer-events:none;animation:pt .6s forwards}@keyframes pt{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0) translateY(-20px)}}.w-bb{position:absolute;background:#fff;color:#000;padding:4px 8px;border-radius:8px;font-size:.6rem;max-width:120px;text-align:center;animation:bf 2s forwards;z-index:15;box-shadow:0 2px 8px rgba(0,0,0,.3)}.w-bb::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);border-width:4px 4px 0;border-style:solid;border-color:#fff transparent transparent transparent}@keyframes bf{0%{opacity:0;transform:translateY(5px)}10%{opacity:1;transform:translateY(0)}90%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}.w-ach{position:absolute;bottom:6px;left:6px;background:linear-gradient(90deg,#0f4,#0a4);border:1px solid ${theme.color};padding:3px 6px;font-size:.55rem;color:${theme.color};border-radius:2px;animation:as .5s ease-out;z-index:25}@keyframes as{0%{transform:translateX(-100%)}100%{transform:translateX(0)}}.w-mm{position:absolute;bottom:6px;right:6px;width:80px;height:60px;background:rgba(0,0,0,.6);border:1px solid #333;border-radius:2px;overflow:hidden;z-index:15}.w-md{position:absolute;width:3px;height:3px;background:${theme.color};border-radius:50%}</style>
-<div class="w-h" id="wh_${safe}"><div class="w-ui" id="wu_${safe}">LVL:1|XP:0|H:100%</div><div class="w-wx" id="ww_${safe}">☀️</div><div id="w_${safe}" class="w-p idle">${WOLF_SVG.replace(/var\(--pc\)/g, cfg.color).replace(/currentColor/g, cfg.color)}</div><div class="w-mm"><div class="w-md" id="md_${safe}"></div></div></div>
-<script>(function(){var h=document.getElementById('wh_${safe}'),w=document.getElementById('w_${safe}'),u=document.getElementById('wu_${safe}'),wx=document.getElementById('ww_${safe}'),md=document.getElementById('md_${safe}'),k='pet_${safe}',s=JSON.parse(localStorage.getItem(k)||'{"l":1,"x":0,"h":100,"e":100,"c":0}'),p={x:s.x||h.clientWidth-80,y:s.y||h.clientHeight-70},v={x:2,y:1},d=false,do_={x:0,y:0},sp=${speed},cr=${changeRate},mt=0,wt=0,night=false,ach=s.ach||[],cd=0;function sv(){localStorage.setItem(k,JSON.stringify({l:s.l,x:p.x,y:p.y,h:s.h,e:s.e,c:s.c,ach:ach}))}function ft(t,x,y){var e=document.createElement('div');e.className='w-ft';e.textContent=t;e.style.left=x+'px';e.style.top=y+'px';h.appendChild(e);setTimeout(()=>e.remove(),700)}function pt(x,y){for(var i=0;i<5;i++){var e=document.createElement('div');e.className='w-pt';e.style.left=(x+Math.random()*30)+'px';e.style.top=(y+Math.random()*30)+'px';h.appendChild(e);setTimeout(()=>e.remove(),600)}}function bb(t,x,y){var e=document.createElement('div');e.className='w-bb';e.textContent=t;e.style.left=(x-40)+'px';e.style.top=(y-30)+'px';h.appendChild(e);setTimeout(()=>e.remove(),2000)}function ach_(id,n){if(ach.includes(id))return;ach.push(id);var e=document.createElement('div');e.className='w-ach';e.innerHTML='🏆 '+n;h.appendChild(e);setTimeout(()=>e.remove(),3500)}function up(){u.textContent='LVL:'+s.l+'|XP:'+(s.x||0)+'|H:'+Math.floor(s.h||100)+'%';wx.textContent=night?'🌙':'☀️';md.style.left=(p.x/(h.clientWidth-64)*74)+'px';md.style.top=(p.y/(h.clientHeight-56)*54)+'px'}var vls={N:['...','*sniff*'],H:['*wags*','¡Bien!'],A:['*gruñe*','Grr'],E:['*ladra*','¡Ya!'],S:['*zzz*','...'],G:['Comida...','*gime*']};function mood(m){if(m==='H'){w.classList.add('happy');setTimeout(()=>w.classList.remove('happy'),400)}else if(m==='A')w.classList.add('angry');else if(m==='S'||m==='G')w.classList.add('sleep');else{w.classList.remove('happy','angry','sleep','sick')}}function loop(n){if(!d){if(Math.random()<cr){v.x=(Math.random()-.5)*sp;v.y=(Math.random()-.5)*sp;w.classList.toggle('hunt',Math.random()<.3&&!w.classList.contains('sleep'))}p.x+=v.x*.016;p.y+=v.y*.016;var mx=h.clientWidth-64,my=h.clientHeight-56;if(p.x<=0){p.x=0;v.x*=-1}if(p.x>=mx){p.x=mx;v.x*=-1}if(p.y<=0){p.y=0;v.y*=-1}if(p.y>=my){p.y=my;v.y*=-1}s.h=Math.max(0,(s.h||100)-.02);s.e=Math.max(0,(s.e||100)-.015);if(s.h<20||s.e<20)s.hl=Math.max(0,(s.hl||100)-.01);else if(s.h>80&&s.e>80)s.hl=Math.min(100,(s.hl||100)+.005);mt+=.016;if(mt>8){mt=0;var ms=(s.hl||100)<30?'S':s.h<25?'G':s.e<20?'S':Math.random()<.35?'H':Math.random()<.15?'A':'N';mood(ms);var vl=vls[ms];if(vl&&Math.random()<.4)bb(vl[Math.floor(Math.random()*vl.length)],p.x+32,p.y)}wt+=.016;if(wt>25){wt=0;night=!night;h.style.filter=night?'brightness(0.65)':'brightness(1)';if(night)ach_('night_owl','Nocturno')}w.style.left=p.x+'px';w.style.top=p.y+'px';w.style.transform='scaleX('+(v.x>=0?1:-1)+')';w.classList.toggle('idle',Math.abs(v.x)<15);sv();up()}if(cd>0)cd-=.016;requestAnimationFrame(loop)}w.addEventListener('mousedown',function(e){if(e.target.closest('.w-ui')||e.target.closest('.w-wx'))return;d=true;var r=h.getBoundingClientRect();do_.x=e.clientX-r.left-p.x;do_.y=e.clientY-r.top-p.y;w.style.transition='none';w.classList.remove('idle')});window.addEventListener('mouseup',function(){if(d){d=false;w.style.transition='transform .1s';v.x=(Math.random()-.5)*50;v.y=(Math.random()-.5)*50}});window.addEventListener('mousemove',function(e){if(!d)return;var r=h.getBoundingClientRect();p.x=Math.max(0,Math.min(h.clientWidth-64,e.clientX-r.left-do_.x));p.y=Math.max(0,Math.min(h.clientHeight-56,e.clientY-r.top-do_.y));w.style.left=p.x+'px';w.style.top=p.y+'px'});w.addEventListener('click',function(e){if(d||cd>0)return;s.c=(s.c||0)+1;if(s.c>=50)ach_('clicks50','Dedicado');if(s.c===1)ach_('first_pet','Primer Contacto');var r=w.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;pt(x,y);var a=[{t:'CARICIA +5',x:5,h:-3,e:4,m:'H',v:'*contento*'}, {t:'JUGAR +12',x:12,h:-8,e:-10,m:'E',v:'¡Vamos!'}, {t:'ORDEN +8',x:8,h:-5,e:-6,m:'N',v:'*atento*'}],c=a[Math.floor(Math.random()*a.length)];s.x=(s.x||0)+c.x;s.h=Math.max(0,(s.h||100)+c.h);s.e=Math.max(0,(s.e||100)+c.e);if(s.e>85)s.hl=Math.min(100,(s.hl||100)+2);mood(c.m);if(c.v)bb(c.v,p.x+32,p.y);if(s.x>=s.l*50){s.l++;s.x=0;ft('¡NIVEL UP!',p.x+10,p.y-30,'#0f0');for(var i=0;i<15;i++)setTimeout(()=>pt(p.x+32,p.y+28),i*40);if(s.l===5)ach_('lvl5','Veterano');if(s.l===10)ach_('lvl10','Alfa')}else ft(c.t,p.x+10,p.y-10,'#fff');w.classList.add('wag');setTimeout(()=>w.classList.remove('wag'),600);cd=0.8;up()});if(s.l>=5)ach_('lvl5','Veterano');if(s.l>=10)ach_('lvl10','Alfa');up();requestAnimationFrame(loop);})();<\/script><!-- END -->`;
+    const embed = `<!-- PET ELITE v5 -->
+<style>.w-h{position:fixed;bottom:20px;right:20px;width:320px;height:220px;background:${theme.bg};border:1px solid #333;overflow:hidden;z-index:9999;font-family:monospace;box-shadow:inset 0 0 40px ${theme.glow}}.w-p{position:absolute;width:${petSize}px;height:${petSize*.875}px;cursor:grab;--pc:${cfg.color};--glow:${theme.glow};transition:transform .1s,filter .2s;user-select:none;filter:drop-shadow(0 0 3px var(--glow))}.w-p:active{cursor:grabbing;filter:drop-shadow(0 0 8px var(--pc))}.w-p svg{width:100%;height:100%;fill:var(--pc)}.w-p .eye{fill:#000;opacity:.85}.w-p:hover .eye{fill:var(--pc);opacity:1}.w-p.hunt{filter:drop-shadow(0 0 10px var(--pc));animation:hp .4s infinite alternate}.w-p.sleep{opacity:.65;filter:grayscale(.5)}.w-p.happy{animation:hb .35s ease-in-out}.w-p.angry{filter:drop-shadow(0 0 5px #f44)}.w-p.wag .tail{animation:wag .25s infinite alternate}.w-p.idle{animation:br 3s infinite ease-in-out}@keyframes hp{0%{filter:drop-shadow(0 0 6px var(--pc))}100%{filter:drop-shadow(0 0 15px var(--pc))}}@keyframes hb{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}@keyframes wag{0%{transform:rotate(-12deg)}100%{transform:rotate(12deg)}}@keyframes br{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.05)}}.w-ui{position:absolute;top:6px;left:6px;background:#000d;padding:5px 8px;font-size:.58rem;color:${theme.color};border-radius:4px;border:1px solid #333;z-index:15}.w-wx{position:absolute;top:6px;right:6px;font-size:.6rem;color:#888;z-index:15}.w-ft{position:absolute;color:#fff;font-weight:bold;font-size:.68rem;pointer-events:none;animation:fu .7s forwards;text-shadow:0 0 5px #000;z-index:20}@keyframes fu{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-35px)}}.w-pt{position:absolute;border-radius:50%;pointer-events:none;animation:pt .6s forwards}@keyframes pt{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0) translate(var(--dx),var(--dy))}}.w-bb{position:absolute;background:#fff;color:#000;padding:5px 10px;border-radius:10px;font-size:.63rem;max-width:130px;text-align:center;animation:bf 2s forwards;z-index:15;box-shadow:0 3px 12px rgba(0,0,0,.4);border:1px solid #ddd}.w-bb::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border-width:5px 5px 0;border-style:solid;border-color:#fff transparent transparent transparent}@keyframes bf{0%{opacity:0;transform:translateY(8px)}10%{opacity:1;transform:translateY(0)}90%{opacity:1}100%{opacity:0;transform:translateY(-12px)}}.w-ach{position:absolute;bottom:6px;left:6px;background:linear-gradient(135deg,#0f42,#0f44,#0cf2);border:1px solid ${theme.color};padding:4px 8px;font-size:.56rem;color:${theme.color};border-radius:4px;animation:as .4s ease-out;z-index:25}@keyframes as{0%{transform:translateX(-120%);opacity:0}100%{transform:translateX(0);opacity:1}}.w-mm{position:absolute;bottom:6px;right:6px;width:90px;height:65px;background:rgba(0,0,0,.7);border:1px solid #333;border-radius:3px;overflow:hidden;z-index:15}.w-md{position:absolute;width:4px;height:4px;background:${theme.color};border-radius:50%;box-shadow:0 0 6px ${theme.color}}.w-acc{position:absolute;pointer-events:none;z-index:12}.w-acc-hat{top:-12px;left:50%;transform:translateX(-50%);font-size:1.1rem}.w-acc-collar{bottom:8px;left:50%;transform:translateX(-50%);width:35px;height:7px;background:${cfg.color};border-radius:3px;box-shadow:0 0 6px ${cfg.color}}.w-acc-glow{position:absolute;inset:-8px;border-radius:50%;background:radial-gradient(circle,var(--glow),transparent 70%);animation:gp 1.5s infinite;opacity:.6}@keyframes gp{0%,100%{opacity:.4}50%{opacity:.8}}</style>
+<div class="w-h" id="wh_${safe}"><div class="w-ui" id="wu_${safe}">LVL:1|XP:0|H:100%</div><div class="w-wx" id="ww_${safe}">☀️</div><div id="w_${safe}" class="w-p idle">${WOLF_SVG.replace(/var\(--pc\)/g,cfg.color).replace(/currentColor/g,cfg.color)}</div>${acc==='hat'?'<div class="w-acc w-acc-hat">🎩</div>':acc==='collar'?'<div class="w-acc w-acc-collar"></div>':acc==='glow'?'<div class="w-acc w-acc-glow"></div>':''}<div class="w-mm"><div class="w-md" id="md_${safe}"></div></div></div>
+<script>(function(){var h=document.getElementById('wh_${safe}'),w=document.getElementById('w_${safe}'),u=document.getElementById('wu_${safe}'),wx=document.getElementById('ww_${safe}'),md=document.getElementById('md_${safe}'),k='pet5_${safe}',s=JSON.parse(localStorage.getItem(k)||'{"l":1,"x":0,"h":100,"e":100,"c":0}'),p={x:s.x||h.clientWidth-80,y:s.y||h.clientHeight-70},v={x:2,y:1},d=false,do_={x:0,y:0},sp=${speed},cr=${changeRate},mt=0,wt=0,qt=0,night=false,ach=s.ach||[],cd=0,ec=0;function sv(){localStorage.setItem(k,JSON.stringify({l:s.l,x:p.x,y:p.y,h:s.h,e:s.e,c:s.c,ach:ach}))}function ft(t,x,y){var e=document.createElement('div');e.className='w-ft';e.textContent=t;e.style.left=x+'px';e.style.top=y+'px';h.appendChild(e);setTimeout(()=>e.remove(),700)}function pt(x,y,c,dx,dy){var e=document.createElement('div');e.className='w-pt';e.style.cssText='left:'+x+'px;top:'+y+'px;width:'+(3+Math.random()*4)+'px;height:'+(3+Math.random()*4)+'px;background:'+c+';--dx:'+(dx||Math.random()*40-20)+'px;--dy:'+(dy||-Math.random()*30-10)+'px';h.appendChild(e);setTimeout(()=>e.remove(),600)}function bb(t,x,y){var e=document.createElement('div');e.className='w-bb';e.textContent=t;e.style.left=(x-50)+'px';e.style.top=(y-35)+'px';h.appendChild(e);setTimeout(()=>e.remove(),2000)}function ach_(id,n,ic){if(ach.includes(id))return;ach.push(id);var e=document.createElement('div');e.className='w-ach';e.innerHTML=(ic||'🏆')+' <b>'+n+'</b>';h.appendChild(e);setTimeout(()=>e.remove(),4000)}function up(){u.textContent='LVL:'+s.l+'|XP:'+(s.x||0)+'|H:'+Math.floor(s.h||100)+'%';wx.textContent=night?'🌙':'☀️';var mx=h.clientWidth-64,my=h.clientHeight-56;if(mx>0&&my>0){md.style.left=(p.x/mx*84)+'px';md.style.top=(p.y/my*59)+'px'}}var vls={N:['...','*sniff*'],H:['*wags*','¡Bien!'],A:['*gruñe*','Grr'],E:['*ladra*','¡Ya!'],S:['*zzz*','...'],G:['Comida...','🍖?'],L:['❤️','*ronronea*']};function mood(m){if(m==='H'){w.classList.add('happy');setTimeout(()=>w.classList.remove('happy'),350)}else if(m==='A')w.classList.add('angry');else if(m==='E')w.classList.add('hunt');else if(m==='S'||m==='G')w.classList.add('sleep');else if(m==='L'){bb('❤️',p.x+32,p.y)}else{w.classList.remove('happy','angry','sleep','hunt')}}function loop(n){if(!d){if(Math.random()<cr){v.x=(Math.random()-.5)*sp;v.y=(Math.random()-.5)*sp;w.classList.toggle('hunt',Math.random()<.35&&!w.classList.contains('sleep'))}p.x+=v.x*.016;p.y+=v.y*.016;var mx=h.clientWidth-64,my=h.clientHeight-56;if(p.x<=0||p.x>=mx){p.x=Math.max(0,Math.min(mx,p.x));v.x*=-1}if(p.y<=0||p.y>=my){p.y=Math.max(0,Math.min(my,p.y));v.y*=-1}s.h=Math.max(0,(s.h||100)-.025);s.e=Math.max(0,(s.e||100)-.018);if(s.h<25||s.e<25)s.hl=Math.max(0,(s.hl||100)-.008);else if(s.h>75&&s.e>75)s.hl=Math.min(100,(s.hl||100)+.005);mt+=.016;if(mt>5){mt=0;var ms=(s.hl||100)<35?'S':s.h<30?'G':s.e<25?'S':Math.random()<.4?'H':Math.random()<.18?'A':'N';mood(ms);var vl=vls[ms];if(vl&&Math.random()<.45)bb(vl[Math.floor(Math.random()*vl.length)],p.x+32,p.y)}wt+=.016;if(wt>22){wt=0;night=!night;wx.textContent=night?'🌙':'☀️';h.style.filter=night?'brightness(0.62)':'brightness(1)';if(night)ach_('night_owl','Nocturno','🌙')}qt+=.016;if(qt>1){qt=0;if(s.c>=50)ach_('clicks_50','Dedicado','💪');if(s.l>=3)ach_('level_3','Cadete','⭐');if(s.l>=5)ach_('level_5','Veterano','🎖️');if(s.l>=10)ach_('level_10','Alfa','👑')}w.style.left=p.x+'px';w.style.top=p.y+'px';w.style.transform='scaleX('+(v.x>=0?1:-1)+')';w.classList.toggle('idle',Math.abs(v.x)<18);sv();up()}if(cd>0)cd-=.016;if(ec>0)ec-=.016;requestAnimationFrame(loop)}w.addEventListener('mousedown',function(e){if(e.target.closest('.w-ui')||e.target.closest('.w-wx'))return;d=true;var r=h.getBoundingClientRect();do_.x=e.clientX-r.left-p.x;do_.y=e.clientY-r.top-p.y;w.style.transition='none';w.classList.remove('idle')});window.addEventListener('mouseup',function(){if(d){d=false;w.style.transition='transform .1s';v.x=(Math.random()-.5)*55;v.y=(Math.random()-.5)*55}});window.addEventListener('mousemove',function(e){if(!d)return;var r=h.getBoundingClientRect();p.x=Math.max(0,Math.min(h.clientWidth-64,e.clientX-r.left-do_.x));p.y=Math.max(0,Math.min(h.clientHeight-56,e.clientY-r.top-do_.y));w.style.left=p.x+'px';w.style.top=p.y+'px'});w.addEventListener('click',function(e){if(d||cd>0)return;s.c=(s.c||0)+1;pt(p.x+32,p.y+28,'${theme.particle}',Math.random()*30-15,-Math.random()*25-10);var a=[{t:'CARICIA +5',x:5,h:-4,e:5,m:'H',v:'*contento*'}, {t:'JUGAR +12',x:12,h:-10,e:-12,m:'E',v:'¡Vamos!'}, {t:'CUIDAR +10',x:10,h:5,e:-5,m:'L',v:'❤️',hl:3}],c=a[Math.floor(Math.random()*a.length)];s.x=(s.x||0)+c.x;s.h=Math.max(0,(s.h||100)+(c.h||0));s.e=Math.max(0,(s.e||100)+(c.e||0));if(c.hl)s.hl=Math.min(100,(s.hl||100)+c.hl);mood(c.m);if(c.v)bb(c.v,p.x+32,p.y);if(s.x>=s.l*50){s.l++;s.x=0;ft('⭐ NIVEL '+s.l+'!',p.x+5,p.y-35,'#ff0');for(var i=0;i<20;i++)setTimeout(()=>pt(p.x+32,p.y+28,'${theme.particle}',Math.random()*60-30,-Math.random()*50-20),i*30);if(s.l===3)ach_('level_3','Cadete','⭐');if(s.l===5)ach_('level_5','Veterano','🎖️');if(s.l===10)ach_('level_10','Alfa','👑')}else ft(c.t,p.x+10,p.y-10,'#fff');w.classList.add('wag');setTimeout(()=>w.classList.remove('wag'),500);cd=0.9;up()});if(s.l>=3)ach_('level_3','Cadete','⭐');if(s.l>=5)ach_('level_5','Veterano','🎖️');if(s.l>=10)ach_('level_10','Alfa','👑');if(s.c>=50)ach_('clicks_50','Dedicado','💪');up();requestAnimationFrame(loop);})();<\/script><!-- END -->`;
     
     document.getElementById('embed-text').textContent = embed;
-    spawnFloat('✓ LISTO', area.clientWidth/2-30, 20, '#00ff41');
-    playSound(880, 0.2, 'square');
+    spawnFloat('✓ ELITE LISTO', area.clientWidth/2-45, 20, '#00ff41');
+    playSequence([{freq:523,dur:0.08},{freq:659,dur:0.08},{freq:784,dur:0.08},{freq:1047,dur:0.15}]);
   }
 
-  // Inicialización
-  sync();
-  startPreview();
-  
-  // Prevenir selección de texto al arrastrar
-  document.addEventListener('selectstart', e => {
-    if(state.dragging) e.preventDefault();
-  });
+  // Init
+  sync(); startPreview();
+  document.addEventListener('selectstart', e => { if(state.dragging) e.preventDefault(); });
 </script>
 </body>
 </html>
