@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WOLF PET // EMBED GENERATOR</title>
+<style>
+  :root{--bg:#0b0c10;--panel:#141619;--accent:#00ff41;--text:#8a8f98;--border:#2a2d32}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Courier New',monospace;padding:2rem;min-height:100vh}
+  .container{max-width:650px;margin:0 auto}
+  h1{color:var(--accent);text-transform:uppercase;letter-spacing:2px;font-size:1.3rem;margin:0 0 1.2rem;border-bottom:1px solid var(--border);padding-bottom:.8rem}
+  .controls{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+  label{display:block;margin-bottom:.4rem;font-size:.75rem;color:#556;text-transform:uppercase}
+  input{background:var(--panel);border:1px solid var(--border);color:var(--accent);padding:.6rem;width:100%;box-sizing:border-box;font-family:inherit}
+  input[type=range]{padding:0;height:40px;cursor:pointer}
+  button{background:#1a1d22;border:1px solid var(--accent);color:var(--accent);padding:.7rem;width:100%;font-weight:bold;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1px}
+  button:hover{background:var(--accent);color:#000}
+  #preview{width:100%;height:220px;background:#0f1114;border:1px solid var(--border);position:relative;overflow:hidden;margin:1.5rem 0;border-radius:4px}
+  #output-wrap{position:relative;background:#08090a;border:1px solid var(--border);padding:1rem;border-radius:4px}
+  #embed-text{margin:0;font-size:.7rem;color:#667;overflow-x:auto;white-space:pre-wrap;word-break:break-all;min-height:120px;max-height:180px}
+  .copy-btn{position:absolute;top:.5rem;right:.5rem;background:#222;border:1px solid #444;color:#aaa;padding:.3rem .6rem;font-size:.65rem;cursor:pointer;border-radius:2px}
+  .copy-btn:hover{background:#333;color:#fff}
+  .wolf-pet{position:absolute;width:56px;height:48px;cursor:pointer;--pc:#00ff41;transition:transform .15s ease, filter .2s ease}
+  .wolf-pet svg{width:100%;height:100%;fill:var(--pc);transition:fill .2s}
+  .wolf-pet:hover{filter:drop-shadow(0 0 8px var(--pc)) brightness(1.2)}
+  .wolf-pet.idle{animation:breathe 3s infinite ease-in-out}
+  .wolf-pet.moving{animation:stride .4s infinite alternate}
+  .wolf-pet .eye{fill:#000;opacity:.8}
+  .wolf-pet:hover .eye{fill:var(--pc);opacity:1}
+  @keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}
+  @keyframes stride{0%{transform:translateY(0) rotate(-2deg)}100%{transform:translateY(-3px) rotate(2deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>WOLF PET // GENERATOR</h1>
+  <div class="controls">
+    <div><label>CALLSIGN</label><input id="name" type="text" value="ALPHA_01" maxlength="12"></div>
+    <div><label>COLOR TÁCTICO</label><input id="color" type="color" value="#00ff41"></div>
+  </div>
+  <div class="controls" style="grid-template-columns:1fr">
+    <div><label>VELOCIDAD PATRULLA</label><input id="speed" type="range" min="50" max="300" value="150"></div>
+  </div>
+  <button onclick="generate()">GENERAR EMBED</button>
+  <div id="preview"><div id="preview-wolf" class="wolf-pet idle"></div></div>
+  <div id="output-wrap">
+    <pre id="embed-text">[CÓDIGO EMBED AQUÍ]</pre>
+    <button class="copy-btn" onclick="copyEmbed()">COPIAR</button>
+  </div>
+</div>
+<script>
+  const WOLF_SVG = `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+    <path d="M88 32 L78 18 L68 28 L58 12 L48 22 L38 8 L28 22 L18 12 L8 32 L18 48 L12 64 L28 58 L38 72 L52 76 L66 72 L76 58 L92 64 L88 48 Z"/>
+    <circle cx="38" cy="36" r="2.5" class="eye"/>
+    <path d="M62 62 Q76 68 86 56" fill="none" stroke="var(--pc)" stroke-width="2.5" stroke-linecap="round" class="tail"/>
+  </svg>`;
+
+  const preview = document.getElementById('preview-wolf');
+  const area = document.getElementById('preview');
+  let cfg = { name: 'ALPHA_01', color: '#00ff41', speed: 150 };
+  let vx=0, vy=0, px=50, py=50;
+
+  function updateConfig(){
+    cfg.name = document.getElementById('name').value.replace(/\s/g,'_') || 'PET';
+    cfg.color = document.getElementById('color').value;
+    cfg.speed = parseInt(document.getElementById('speed').value);
+    preview.style.setProperty('--pc', cfg.color);
+  }
+
+  ['input','change'].forEach(evt => {
+    document.getElementById('name').addEventListener(evt, updateConfig);
+    document.getElementById('color').addEventListener(evt, updateConfig);
+    document.getElementById('speed').addEventListener(evt, updateConfig);
+  });
+
+  function startPreviewLoop(){
+    preview.innerHTML = WOLF_SVG;
+    let last = performance.now();
+    function loop(now){
+      const dt = (now - last) / 1000;
+      last = now;
+      vx += (Math.random() - 0.5) * cfg.speed * dt;
+      vy += (Math.random() - 0.5) * cfg.speed * dt;
+      vx *= 0.95; vy *= 0.95;
+      px += vx * dt * 100; py += vy * dt * 100;
+      const maxX = area.clientWidth - 56, maxY = area.clientHeight - 48;
+      if(px<0){px=0;vx*=-0.5} if(px>maxX){px=maxX;vx*=-0.5}
+      if(py<0){py=0;vy*=-0.5} if(py>maxY){py=maxY;vy*=-0.5}
+      preview.style.left = px+'px'; preview.style.top = py+'px';
+      preview.style.transform = `scaleX(${vx>=0?1:-1})`;
+      preview.classList.toggle('moving', Math.abs(vx)>1.5 || Math.abs(vy)>1.5);
+      preview.classList.toggle('idle', !(Math.abs(vx)>1.5 || Math.abs(vy)>1.5));
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function generate(){
+    updateConfig();
+    const safe = cfg.name.replace(/[^a-zA-Z0-9_]/g,'_');
+    const embed = `<!-- WOLF PET EMBED -->
+<style>.w-pet{position:fixed;bottom:24px;right:24px;width:56px;height:48px;cursor:pointer;z-index:9999;--pc:${cfg.color};transition:transform .15s,filter .2s}.w-pet svg{width:100%;height:100%;fill:var(--pc);transition:fill .2s}.w-pet:hover{filter:drop-shadow(0 0 8px var(--pc)) brightness(1.2)}.w-pet.idle{animation:wb 3s infinite ease-in-out}.w-pet.moving{animation:ws .4s infinite alternate}.w-pet .eye{fill:#000;opacity:.8}.w-pet:hover .eye{fill:var(--pc);opacity:1}@keyframes wb{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}@keyframes ws{0%{transform:translateY(0) rotate(-2deg)}100%{transform:translateY(-3px) rotate(2deg)}}</style>
+<div id="w_${safe}" class="w-pet idle">${WOLF_SVG}</div>
+<script>(function(){var e=document.getElementById('w_${safe}'),v=0,x=window.innerWidth-80,y=window.innerHeight-80,s=${cfg.speed};e.style.left=x+'px';e.style.top=y+'px';function m(){v+=(Math.random()-.5)*s;x+=v*.08;y+=(Math.random()-.5)*s*.08;v*=.95;x=Math.max(10,Math.min(window.innerWidth-66,x));y=Math.max(10,Math.min(window.innerHeight-58,y));e.style.left=x+'px';e.style.top=y+'px';e.style.transform='scaleX('+(v>=0?1:-1)+')';e.classList.toggle('moving',Math.abs(v)>1.5);e.classList.toggle('idle',Math.abs(v)<=1.5)}setInterval(m,16);e.addEventListener('click',function(){alert('[${safe}] // STATUS: ACTIVE. UPTIME: '+Math.floor(performance.now()/1000)+'s')});})();<\/script>
+<!-- END WOLF PET -->`;
+    document.getElementById('embed-text').textContent = embed;
+  }
+
+  function copyEmbed(){
+    const txt = document.getElementById('embed-text').textContent;
+    if(txt.includes('[')) return;
+    navigator.clipboard.writeText(txt).then(()=>{
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent='COPIADO'; setTimeout(()=>btn.textContent='COPIAR',1500);
+    });
+  }
+
+  updateConfig(); startPreviewLoop();
+</script>
+</body></html>
