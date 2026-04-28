@@ -3,76 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WOLF PET // TACTICAL v3</title>
+<title>WOLF PET // TACTICAL v4</title>
 <style>
   :root{--bg:#0b0c10;--panel:#141619;--accent:#00ff41;--text:#8a8f98;--border:#2a2d32}
   body{margin:0;background:var(--bg);color:var(--text);font-family:'Courier New',monospace;padding:1.5rem;min-height:100vh}
   .container{max-width:750px;margin:0 auto}
   h1{color:var(--accent);text-transform:uppercase;letter-spacing:2px;font-size:1.3rem;margin:0 0 1rem;border-bottom:1px solid var(--border);padding-bottom:.6rem}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1rem 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin:1rem 0}
   label{display:block;margin-bottom:.3rem;font-size:.7rem;color:#556;text-transform:uppercase}
   input,select{background:var(--panel);border:1px solid var(--border);color:var(--accent);padding:.5rem;width:100%;box-sizing:border-box;font-family:inherit}
   button{background:#1a1d22;border:1px solid var(--accent);color:var(--accent);padding:.6rem;width:100%;font-weight:bold;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:all .2s;margin-top:.5rem}
   button:hover{background:var(--accent);color:#000}
-  #preview{width:100%;height:280px;background:#0f1114;border:1px solid var(--border);position:relative;overflow:hidden;margin:1.2rem 0;border-radius:4px}
+  #preview{width:100%;height:300px;background:#0f1114;border:1px solid var(--border);position:relative;overflow:hidden;margin:1.2rem 0;border-radius:4px;cursor:crosshair}
   #output-wrap{position:relative;background:#08090a;border:1px solid var(--border);padding:.8rem;border-radius:4px}
   #embed-text{margin:0;font-size:.65rem;color:#667;overflow-x:auto;white-space:pre-wrap;word-break:break-all;min-height:100px;max-height:180px}
   .copy-btn{position:absolute;top:.4rem;right:.4rem;background:#222;border:1px solid #444;color:#aaa;padding:.2rem .5rem;font-size:.6rem;cursor:pointer;border-radius:2px}
   .copy-btn:hover{background:#333;color:#fff}
   
-  .wp-ui{position:absolute;top:8px;left:8px;background:#000d;padding:4px 8px;border-radius:3px;font-size:.6rem;color:var(--accent);pointer-events:none;border:1px solid #333;min-width:180px}
+  .wp-ui{position:absolute;top:8px;left:8px;background:#000d;padding:6px 8px;border-radius:4px;font-size:.6rem;color:var(--accent);pointer-events:none;border:1px solid #333;width:160px}
+  .bar{height:4px;background:#222;border-radius:2px;margin:3px 0;overflow:hidden}
+  .bar-fill{height:100%;background:var(--accent);transition:width .3s}
   .wp-pet{position:absolute;width:64px;height:56px;cursor:grab;--pc:#00ff41;transition:transform .1s,filter .2s;user-select:none;z-index:10}
   .wp-pet:active{cursor:grabbing}
   .wp-pet svg{width:100%;height:100%;fill:var(--pc);transition:fill .2s}
   .wp-pet .eye{fill:#000;opacity:.85}
   .wp-pet:hover .eye{fill:var(--pc);opacity:1}
-  .wp-pet.hunt{filter:drop-shadow(0 0 8px var(--pc));animation:huntPulse .5s infinite alternate}
+  .wp-pet.hunt{filter:drop-shadow(0 0 8px var(--pc));animation:hp .4s infinite alternate}
   .wp-pet.sleep{opacity:.5;filter:grayscale(.8)}
-  .wp-pet.happy{animation:happyBounce .4s ease-in-out}
-  .wp-pet.angry{filter:hue-rotate(0deg) drop-shadow(0 0 4px #ff0000)}
-  .wp-pet .tail{transition:transform .2s}
+  .wp-pet.happy{animation:hb .4s ease-in-out}
+  .wp-pet.angry{filter:drop-shadow(0 0 4px #f00)}
   .wp-pet.wag .tail{animation:wag .3s infinite alternate}
-  .wp-pet.idle{animation:breathe 3s infinite ease-in-out}
-  @keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}
+  .wp-pet.idle{animation:br 3s infinite ease-in-out}
+  @keyframes hp{0%{filter:drop-shadow(0 0 4px var(--pc))}100%{filter:drop-shadow(0 0 12px var(--pc))}}
+  @keyframes hb{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
   @keyframes wag{0%{transform:rotate(-15deg)}100%{transform:rotate(15deg)}}
-  @keyframes huntPulse{0%{filter:drop-shadow(0 0 4px var(--pc))}100%{filter:drop-shadow(0 0 12px var(--pc))}}
-  @keyframes happyBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-  .float-text{position:absolute;color:#fff;font-weight:bold;font-size:.75rem;pointer-events:none;animation:floatUp .8s forwards;text-shadow:0 0 4px #000;z-index:20}
-  @keyframes floatUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-30px)}}
-  .particle{position:absolute;width:4px;height:4px;background:var(--pc);border-radius:50%;pointer-events:none;animation:particle .6s forwards}
-  @keyframes particle{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0) translateY(-20px)}}
-  .bubble{position:absolute;background:#fff;color:#000;padding:4px 8px;border-radius:8px;font-size:.65rem;max-width:120px;text-align:center;animation:bubbleFade 2s forwards;z-index:15;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  @keyframes br{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}
+  .float-text{position:absolute;color:#fff;font-weight:bold;font-size:.75rem;pointer-events:none;animation:fu .8s forwards;text-shadow:0 0 4px #000;z-index:20}
+  @keyframes fu{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-30px)}}
+  .particle{position:absolute;width:4px;height:4px;background:var(--pc);border-radius:50%;pointer-events:none;animation:pt .6s forwards}
+  @keyframes pt{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0) translateY(-20px)}}
+  .bubble{position:absolute;background:#fff;color:#000;padding:4px 8px;border-radius:8px;font-size:.6rem;max-width:120px;text-align:center;animation:bf 2s forwards;z-index:15;box-shadow:0 2px 8px rgba(0,0,0,.3)}
   .bubble::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);border-width:4px 4px 0;border-style:solid;border-color:#fff transparent transparent transparent}
-  @keyframes bubbleFade{0%{opacity:0;transform:translateY(5px)}10%{opacity:1;transform:translateY(0)}90%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
+  @keyframes bf{0%{opacity:0;transform:translateY(5px)}10%{opacity:1;transform:translateY(0)}90%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
   .weather{position:absolute;top:8px;right:8px;font-size:.7rem;color:#888;pointer-events:none}
-  .achievement{position:absolute;bottom:8px;left:8px;background:linear-gradient(90deg,#00ff4122,#00ff4144);border:1px solid var(--accent);padding:3px 6px;font-size:.6rem;color:var(--accent);border-radius:3px;animation:achSlide .5s ease-out}
-  @keyframes achSlide{0%{transform:translateX(-100%)}100%{transform:translateX(0)}}
+  .achievement{position:absolute;bottom:8px;left:8px;background:linear-gradient(90deg,#0f42,#0a44);border:1px solid var(--accent);padding:3px 6px;font-size:.6rem;color:var(--accent);border-radius:3px;animation:as .5s ease-out}
+  @keyframes as{0%{transform:translateX(-100%)}100%{transform:translateX(0)}}
+  .feed-btn{position:absolute;bottom:8px;right:8px;background:#222;border:1px solid #444;color:#aaa;padding:2px 6px;font-size:.55rem;cursor:pointer;border-radius:2px}
+  .feed-btn:hover{background:#333;color:#fff}
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>WOLF PET // TACTICAL v3</h1>
+  <h1>WOLF PET // TACTICAL v4</h1>
   <div class="grid">
     <div><label>CALLSIGN</label><input id="name" type="text" value="ALPHA_01" maxlength="12"></div>
     <div><label>COLOR TÁCTICO</label><input id="color" type="color" value="#00ff41"></div>
     <div><label>AGRESIVIDAD</label><select id="aggro">
-      <option value="low">Baja (Patrulla)</option>
-      <option value="med" selected>Media (Caza)</option>
-      <option value="high">Alta (Asalto)</option>
+      <option value="low">Baja (Lento/Pasivo)</option>
+      <option value="med" selected>Media (Ágil/Reactivo)</option>
+      <option value="high">Alta (Rápido/Errático)</option>
     </select></div>
-    <div><label>TEMA</label><select id="theme">
-      <option value="matrix">Matrix</option>
-      <option value="fire">Fuego</option>
-      <option value="ice">Hielo</option>
-      <option value="gold">Oro</option>
+    <div><label>MODO OPERATIVO</label><select id="mode">
+      <option value="patrol" selected>Patrulla Autónoma</option>
+      <option value="loyalty">Lealtad (Persigue Cursor)</option>
     </select></div>
   </div>
   <button onclick="generate()">GENERAR EMBED</button>
   
   <div id="preview">
-    <div class="wp-ui" id="preview-stats">LVL:1 | XP:0 | H:100% | M:Neutral</div>
+    <div class="wp-ui" id="preview-stats">
+      <div>LVL:1 | XP:0</div>
+      <div class="bar"><div class="bar-fill" id="bar-h" style="width:100%"></div></div>
+      <div class="bar"><div class="bar-fill" id="bar-e" style="width:100%"></div></div>
+      <div class="bar"><div class="bar-fill" id="bar-l" style="width:100%"></div></div>
+    </div>
     <div class="weather" id="preview-weather">☀️ Día</div>
     <div id="preview-wolf" class="wp-pet idle"></div>
+    <button class="feed-btn" onclick="feedPet()">RACIÓN [+HUNGER]</button>
   </div>
   
   <div id="output-wrap">
@@ -97,35 +104,26 @@
     gold: {color:'#ffcc00',bg:'#1a1505'}
   };
 
-  const MOODS = ['Neutral','Happy','Angry','Excited','Sleepy','Hungry'];
-  const VOICE_LINES = {
-    Neutral:['...','*sniff*','*yawn*'],
-    Happy:['*wags tail*','Good boy!','*happy noises*'],
-    Angry:['*growl*','Grrr...','*bare teeth*'],
-    Excited:['*barks*','Let\'s go!','*excited*'],
-    Sleepy:['*zzz*','...tired...','*snores*'],
-    Hungry:['*whines*','Food...','*hungry sounds*']
+  const AGGRO_PHYSICS = {
+    low: {maxSpd:70, accel:0.4, friction:0.94, turnRate:0.005},
+    med: {maxSpd:130, accel:1.0, friction:0.91, turnRate:0.012},
+    high: {maxSpd:210, accel:2.2, friction:0.87, turnRate:0.025}
   };
-  
-  const ACHIEVEMENTS = [
-    {id:'first_pet',name:'First Contact',desc:'Pet your wolf for the first time'},
-    {id:'level_5',name:'Veteran',desc:'Reach level 5'},
-    {id:'level_10',name:'Alpha',desc:'Reach level 10'},
-    {id:'full_hunger',name:'Well Fed',desc:'Keep hunger at 100% for 1 minute'},
-    {id:'night_owl',name:'Night Owl',desc:'Play with your wolf at night'},
-    {id:'clicks_50',name:'Dedicated',desc:'Click 50 times'}
-  ];
 
   const preview = document.getElementById('preview-wolf');
   const area = document.getElementById('preview');
   const statsEl = document.getElementById('preview-stats');
   const weatherEl = document.getElementById('preview-weather');
-  let cfg = { name:'ALPHA_01', color:'#00ff41', aggro:'med', theme:'matrix' };
+  const barH = document.getElementById('bar-h');
+  const barE = document.getElementById('bar-e');
+  const barL = document.getElementById('bar-l');
+  
+  let cfg = { name:'ALPHA_01', color:'#00ff41', aggro:'med', mode:'patrol', theme:'matrix' };
   let state = { 
-    lvl:1, xp:0, hunger:100, energy:100, mood:'Neutral', 
-    pos:{x:100,y:100}, vel:{x:2,y:1}, dragging:false, 
+    lvl:1, xp:0, hunger:100, energy:100, loyalty:100, mood:'Neutral', 
+    pos:{x:150,y:150}, vel:{x:0,y:0}, dragging:false, 
     huntMode:false, isNight:false, clickCount:0, playTime:0,
-    achievements:[]
+    achievements:[], mouse:{x:0,y:0}
   };
   let lastTime = 0, moodTimer = 0, weatherTimer = 0;
 
@@ -133,7 +131,8 @@
     cfg.name = document.getElementById('name').value.replace(/\s/g,'_')||'PET';
     cfg.color = document.getElementById('color').value;
     cfg.aggro = document.getElementById('aggro').value;
-    cfg.theme = document.getElementById('theme').value;
+    cfg.mode = document.getElementById('mode').value;
+    cfg.theme = document.getElementById('theme')?.value || 'matrix';
     const theme = THEMES[cfg.theme];
     preview.style.setProperty('--pc',theme.color);
     area.style.background = theme.bg;
@@ -141,16 +140,19 @@
   }
 
   function updateStats(){
-    statsEl.textContent = `LVL:${state.lvl}|XP:${state.xp}|H:${Math.floor(state.hunger)}%|M:${state.mood}`;
-    weatherEl.textContent = state.isNight?'🌙 Noche':'☀️ Día';
+    statsEl.querySelector('div').textContent = `LVL:${state.lvl}|XP:${state.xp}`;
+    barH.style.width = Math.max(0,state.hunger)+'%';
+    barE.style.width = Math.max(0,state.energy)+'%';
+    barL.style.width = Math.max(0,state.loyalty)+'%';
+    weatherEl.textContent = state.isNight?' Noche':'☀️ Día';
   }
 
   function spawnParticle(x,y){
-    for(let i=0;i<5;i++){
+    for(let i=0;i<6;i++){
       const p=document.createElement('div');
       p.className='particle';
-      p.style.left=(x+Math.random()*30)+'px';
-      p.style.top=(y+Math.random()*30)+'px';
+      p.style.left=(x+Math.random()*40-20)+'px';
+      p.style.top=(y+Math.random()*40-20)+'px';
       p.style.setProperty('--pc',cfg.color);
       area.appendChild(p);
       setTimeout(()=>p.remove(),600);
@@ -159,33 +161,25 @@
 
   function spawnFloat(txt,x,y,color){
     const el=document.createElement('div');
-    el.className='float-text';
-    el.textContent=txt;
-    el.style.left=x+'px';
-    el.style.top=y+'px';
+    el.className='float-text'; el.textContent=txt;
+    el.style.left=x+'px'; el.style.top=y+'px';
     if(color) el.style.color=color;
-    area.appendChild(el);
-    setTimeout(()=>el.remove(),800);
+    area.appendChild(el); setTimeout(()=>el.remove(),800);
   }
 
   function spawnBubble(text,x,y){
     const b=document.createElement('div');
-    b.className='bubble';
-    b.textContent=text;
-    b.style.left=(x-40)+'px';
-    b.style.top=(y-30)+'px';
-    area.appendChild(b);
-    setTimeout(()=>b.remove(),2000);
+    b.className='bubble'; b.textContent=text;
+    b.style.left=(x-40)+'px'; b.style.top=(y-30)+'px';
+    area.appendChild(b); setTimeout(()=>b.remove(),2000);
   }
 
-  function unlockAchievement(id){
+  function unlockAchievement(id,name){
     if(state.achievements.includes(id)) return;
-    const ach = ACHIEVEMENTS.find(a=>a.id===id);
-    if(!ach) return;
     state.achievements.push(id);
     const el=document.createElement('div');
     el.className='achievement';
-    el.innerHTML=`🏆 ${ach.name}<br><small>${ach.desc}</small>`;
+    el.innerHTML=`🏆 ${name}`;
     area.appendChild(el);
     setTimeout(()=>el.remove(),3000);
   }
@@ -202,6 +196,13 @@
     document.querySelectorAll('input,select').forEach(i=>i.addEventListener(e,sync));
   });
 
+  // Mouse tracking
+  area.addEventListener('mousemove', e=>{
+    const r=area.getBoundingClientRect();
+    state.mouse.x = e.clientX - r.left;
+    state.mouse.y = e.clientY - r.top;
+  });
+
   function startPreview(){
     preview.innerHTML = WOLF_SVG;
     state.pos = {x:area.clientWidth/2-32, y:area.clientHeight/2-28};
@@ -212,60 +213,89 @@
       state.playTime += dt;
       
       if(!state.dragging){
-        const speed = cfg.aggro==='high'?180:cfg.aggro==='med'?120:70;
-        const changeChance = cfg.aggro==='high'?0.02:cfg.aggro==='med'?0.012:0.006;
+        const phys = AGGRO_PHYSICS[cfg.aggro];
         
-        if(Math.random()<changeChance){
-          state.vel.x = (Math.random()-.5)*speed;
-          state.vel.y = (Math.random()-.5)*speed;
-          state.huntMode = Math.random()<0.3;
-          preview.classList.toggle('hunt',state.huntMode);
+        if(cfg.mode === 'patrol'){
+          if(Math.random()<phys.turnRate){
+            state.vel.x = (Math.random()-.5)*phys.maxSpd;
+            state.vel.y = (Math.random()-.5)*phys.maxSpd;
+            state.huntMode = Math.random()<0.3;
+            preview.classList.toggle('hunt',state.huntMode);
+          }
+        } else {
+          // Loyalty mode: chase mouse
+          const dx = state.mouse.x - (state.pos.x+32);
+          const dy = state.mouse.y - (state.pos.y+28);
+          const dist = Math.sqrt(dx*dx+dy*dy);
+          
+          if(dist > 10){
+            const nx = dx/dist, ny = dy/dist;
+            state.vel.x += nx * phys.accel * dt * 60;
+            state.vel.y += ny * phys.accel * dt * 60;
+            state.huntMode = dist < 80;
+            preview.classList.toggle('hunt', state.huntMode);
+            state.loyalty = Math.min(100, state.loyalty + dt*0.5);
+          } else {
+            state.huntMode = false;
+            preview.classList.remove('hunt');
+            if(Math.random()<0.02) spawnBubble('*wags*', state.pos.x+32, state.pos.y);
+          }
+        }
+        
+        // Apply friction & clamp speed
+        state.vel.x *= phys.friction;
+        state.vel.y *= phys.friction;
+        const spd = Math.sqrt(state.vel.x**2 + state.vel.y**2);
+        if(spd > phys.maxSpd){
+          state.vel.x = (state.vel.x/spd)*phys.maxSpd;
+          state.vel.y = (state.vel.y/spd)*phys.maxSpd;
         }
         
         state.pos.x += state.vel.x * dt;
         state.pos.y += state.vel.y * dt;
         
         const mx=area.clientWidth-64, my=area.clientHeight-56;
-        if(state.pos.x<=0){state.pos.x=0;state.vel.x*=-1}
-        if(state.pos.x>=mx){state.pos.x=mx;state.vel.x*=-1}
-        if(state.pos.y<=0){state.pos.y=0;state.vel.y*=-1}
-        if(state.pos.y>=my){state.pos.y=my;state.vel.y*=-1}
+        if(state.pos.x<=0){state.pos.x=0;state.vel.x*=-0.5}
+        if(state.pos.x>=mx){state.pos.x=mx;state.vel.x*=-0.5}
+        if(state.pos.y<=0){state.pos.y=0;state.vel.y*=-0.5}
+        if(state.pos.y>=my){state.pos.y=my;state.vel.y*=-0.5}
         
-        // Hunger & Energy decay
-        state.hunger = Math.max(0, state.hunger - dt*1.5);
-        state.energy = Math.max(0, state.energy - dt*0.8);
+        // Decay
+        state.hunger = Math.max(0, state.hunger - dt*1.2);
+        state.energy = Math.max(0, state.energy - dt*0.6);
         
-        // Mood system
+        // Mood logic
         moodTimer += dt;
-        if(moodTimer > 8){
+        if(moodTimer > 7){
           moodTimer = 0;
-          if(state.hunger<30) changeMood('Hungry');
-          else if(state.energy<20) changeMood('Sleepy');
-          else if(Math.random()<0.4) changeMood('Happy');
-          else if(Math.random()<0.2) changeMood('Angry');
+          if(state.hunger<25) changeMood('Hungry');
+          else if(state.energy<15) changeMood('Sleepy');
+          else if(cfg.mode==='loyalty' && state.loyalty>80) changeMood('Happy');
+          else if(Math.random()<0.3) changeMood('Happy');
+          else if(Math.random()<0.15) changeMood('Angry');
           else changeMood('Neutral');
           
-          // Voice bubble
-          const lines = VOICE_LINES[state.mood];
-          if(Math.random()<0.5) spawnBubble(lines[Math.floor(Math.random()*lines.length)], state.pos.x+32, state.pos.y);
+          const lines = {Neutral:['...','*sniff*'],Happy:['*wags*','Good!'],Angry:['*growl*','Grr...'],Excited:['*barks*','Go!'],Sleepy:['*zzz*','...'],Hungry:['Food...','*whine*']};
+          const moodKey = state.mood==='Neutral'?'Neutral':state.mood==='Happy'?'Happy':state.mood==='Angry'?'Angry':state.mood==='Sleepy'?'Sleepy':'Hungry';
+          if(Math.random()<0.4) spawnBubble(lines[moodKey][Math.floor(Math.random()*lines[moodKey].length)], state.pos.x+32, state.pos.y);
         }
         
-        // Day/Night cycle (30 sec)
+        // Day/Night
         weatherTimer += dt;
-        if(weatherTimer > 30){
+        if(weatherTimer > 25){
           weatherTimer = 0;
           state.isNight = !state.isNight;
           area.style.filter = state.isNight?'brightness(0.6)':'brightness(1)';
-          if(state.isNight) unlockAchievement('night_owl');
+          if(state.isNight) unlockAchievement('night_owl','Night Owl');
         }
         
-        if(state.hunger<30) preview.classList.add('sleep');
+        if(state.hunger<25) preview.classList.add('sleep');
         else preview.classList.remove('sleep');
         
         preview.style.left = state.pos.x+'px';
         preview.style.top = state.pos.y+'px';
         preview.style.transform = `scaleX(${state.vel.x>=0?1:-1})`;
-        preview.classList.toggle('idle', Math.abs(state.vel.x)<10 && !state.huntMode);
+        preview.classList.toggle('idle', Math.abs(state.vel.x)<8 && !state.huntMode);
         updateStats();
       }
       requestAnimationFrame(loop);
@@ -273,6 +303,7 @@
     requestAnimationFrame(loop);
   }
 
+  // Drag
   preview.addEventListener('mousedown',e=>{
     state.dragging=true;
     const r=area.getBoundingClientRect();
@@ -280,15 +311,9 @@
     preview.style.transition='none';
     preview.classList.remove('idle');
   });
-  
   window.addEventListener('mouseup',()=>{
-    if(state.dragging){
-      state.dragging=false;
-      preview.style.transition='transform .1s,filter .2s';
-      state.vel = {x:(Math.random()-.5)*50, y:(Math.random()-.5)*50};
-    }
+    if(state.dragging){state.dragging=false;preview.style.transition='transform .1s,filter .2s';}
   });
-  
   window.addEventListener('mousemove',e=>{
     if(!state.dragging)return;
     const r=area.getBoundingClientRect();
@@ -298,90 +323,109 @@
     preview.style.top = state.pos.y+'px';
   });
 
+  // Click
   preview.addEventListener('click',e=>{
     if(state.dragging)return;
     const rect=preview.getBoundingClientRect();
-    const x=e.clientX-rect.left;
-    const y=e.clientY-rect.top;
-    
+    const x=e.clientX-rect.left, y=e.clientY-rect.top;
     state.clickCount++;
-    if(state.clickCount>=50) unlockAchievement('clicks_50');
+    if(state.clickCount>=50) unlockAchievement('clicks50','Dedicated');
     
     spawnParticle(x+state.pos.x,y+state.pos.y);
-    
     const actions = [
-      {t:'PET +5XP',xp:5,h:-2,e:5,m:'Happy',v:'*happy*'},
-      {t:'FEED +15',xp:10,h:20,e:-3,m:'Happy',v:'*nom nom*'},
-      {t:'TRAIN +20',xp:20,h:-8,e:-12,m:'Excited',v:'Let\'s go!'}
+      {t:'PET +5XP',xp:5,h:-2,e:5,m:'Happy',v:'*happy*',l:2},
+      {t:'FEED +15',xp:10,h:20,e:-3,m:'Happy',v:'*nom*',l:0},
+      {t:'TRAIN +20',xp:20,h:-8,e:-12,m:'Excited',v:'Go!',l:5}
     ];
     const act = actions[Math.floor(Math.random()*actions.length)];
-    
     state.xp += act.xp;
     state.hunger = Math.min(100, state.hunger+act.h);
     state.energy = Math.min(100, state.energy+act.e);
+    state.loyalty = Math.min(100, state.loyalty+act.l);
     changeMood(act.m);
     spawnBubble(act.v, state.pos.x+32, state.pos.y);
     
     if(state.xp >= state.lvl*50){
-      state.lvl++;
-      state.xp = 0;
-      spawnFloat('LEVEL UP!', state.pos.x+10, state.pos.y-30, '#00ff41');
+      state.lvl++; state.xp=0;
+      spawnFloat('LEVEL UP!', state.pos.x+10, state.pos.y-30, '#0f0');
       for(let i=0;i<15;i++) setTimeout(()=>spawnParticle(state.pos.x+32, state.pos.y+28), i*40);
-      if(state.lvl===5) unlockAchievement('level_5');
-      if(state.lvl===10) unlockAchievement('level_10');
+      if(state.lvl===5) unlockAchievement('lvl5','Veteran');
+      if(state.lvl===10) unlockAchievement('lvl10','Alpha');
     } else {
       spawnFloat(act.t, state.pos.x+10, state.pos.y-10, '#fff');
     }
-    
     preview.classList.add('wag');
     setTimeout(()=>preview.classList.remove('wag'),600);
     updateStats();
   });
 
+  window.feedPet = function(){
+    state.hunger = Math.min(100, state.hunger+25);
+    spawnFloat('+25 HUNGER', state.pos.x+10, state.pos.y-10, '#0f0');
+    spawnBubble('*chews*', state.pos.x+32, state.pos.y);
+    updateStats();
+  }
+
   let codeGenerated = false;
   
   function generate(){
     sync();
+    codeGenerated = true; // FIX: Flag set BEFORE text update
     const safe = cfg.name.replace(/[^a-zA-Z0-9_]/g,'_');
     const theme = THEMES[cfg.theme];
-    const speed = cfg.aggro==='high'?220:cfg.aggro==='med'?140:80;
-    const changeRate = cfg.aggro==='high'?0.025:cfg.aggro==='med'?0.015:0.008;
+    const phys = AGGRO_PHYSICS[cfg.aggro];
+    const isLoyalty = cfg.mode === 'loyalty';
     
-    const embed = `<!-- WOLF PET v3 -->
-<style>.w-host{position:fixed;bottom:20px;right:20px;width:320px;height:220px;background:${theme.bg};border:1px solid #333;overflow:hidden;z-index:9999;font-family:monospace}.w-pet{position:absolute;width:64px;height:56px;cursor:grab;--pc:${theme.color};transition:transform .1s,filter .2s;user-select:none}.w-pet:active{cursor:grabbing}.w-pet svg{width:100%;height:100%;fill:var(--pc)}.w-pet .eye{fill:#000;opacity:.85}.w-pet:hover .eye{fill:var(--pc);opacity:1}.w-pet.hunt{filter:drop-shadow(0 0 8px var(--pc));animation:hp .5s infinite alternate}.w-pet.sleep{opacity:.5;filter:grayscale(.8)}.w-pet.happy{animation:hb .4s ease-in-out}.w-pet.angry{filter:drop-shadow(0 0 4px #f00)}.w-pet.wag .tail{animation:wag .3s infinite alternate}.w-pet.idle{animation:br 3s infinite ease-in-out}@keyframes hp{0%{filter:drop-shadow(0 0 4px var(--pc))}100%{filter:drop-shadow(0 0 12px var(--pc))}}@keyframes hb{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes wag{0%{transform:rotate(-15deg)}100%{transform:rotate(15deg)}}@keyframes br{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}.w-ui{position:absolute;top:6px;left:6px;background:#000d;padding:3px 6px;font-size:.6rem;color:${theme.color};border-radius:3px;border:1px solid #333}.w-wx{position:absolute;top:6px;right:6px;font-size:.65rem;color:#888}.w-ft{position:absolute;color:#fff;font-weight:bold;font-size:.7rem;pointer-events:none;animation:fu .7s forwards;text-shadow:0 0 4px #000;z-index:20}@keyframes fu{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-25px)}}.w-pt{position:absolute;width:4px;height:4px;background:var(--pc);border-radius:50%;pointer-events:none;animation:pt .6s forwards}@keyframes pt{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0) translateY(-20px)}}.w-bb{position:absolute;background:#fff;color:#000;padding:4px 8px;border-radius:8px;font-size:.6rem;max-width:120px;text-align:center;animation:bf 2s forwards;z-index:15;box-shadow:0 2px 8px rgba(0,0,0,.3)}.w-bb::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);border-width:4px 4px 0;border-style:solid;border-color:#fff transparent transparent transparent}@keyframes bf{0%{opacity:0;transform:translateY(5px)}10%{opacity:1;transform:translateY(0)}90%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}.w-ach{position:absolute;bottom:6px;left:6px;background:linear-gradient(90deg,#0f4,#0a4);border:1px solid ${theme.color};padding:2px 5px;font-size:.55rem;color:${theme.color};border-radius:2px;animation:as .5s ease-out}@keyframes as{0%{transform:translateX(-100%)}100%{transform:translateX(0)}}</style>
-<div class="w-host" id="wh_${safe}"><div class="w-ui" id="wu_${safe}">LVL:1|XP:0|H:100%</div><div class="w-wx" id="ww_${safe}">☀️</div><div id="w_${safe}" class="w-pet idle">${WOLF_SVG}</div></div>
+    const embed = `<!-- WOLF PET v4 -->
+<style>.w-host{position:fixed;bottom:20px;right:20px;width:320px;height:220px;background:${theme.bg};border:1px solid #333;overflow:hidden;z-index:9999;font-family:monospace}.w-pet{position:absolute;width:64px;height:56px;cursor:grab;--pc:${theme.color};transition:transform .1s,filter .2s;user-select:none}.w-pet:active{cursor:grabbing}.w-pet svg{width:100%;height:100%;fill:var(--pc)}.w-pet .eye{fill:#000;opacity:.85}.w-pet:hover .eye{fill:var(--pc);opacity:1}.w-pet.hunt{filter:drop-shadow(0 0 8px var(--pc));animation:hp .4s infinite alternate}.w-pet.sleep{opacity:.5;filter:grayscale(.8)}.w-pet.happy{animation:hb .4s ease-in-out}.w-pet.angry{filter:drop-shadow(0 0 4px #f00)}.w-pet.wag .tail{animation:wag .3s infinite alternate}.w-pet.idle{animation:br 3s infinite ease-in-out}@keyframes hp{0%{filter:drop-shadow(0 0 4px var(--pc))}100%{filter:drop-shadow(0 0 12px var(--pc))}}@keyframes hb{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes wag{0%{transform:rotate(-15deg)}100%{transform:rotate(15deg)}}@keyframes br{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}.w-ui{position:absolute;top:6px;left:6px;background:#000d;padding:4px 6px;font-size:.55rem;color:${theme.color};border-radius:3px;border:1px solid #333;width:140px}.w-bar{height:3px;background:#222;border-radius:2px;margin:2px 0;overflow:hidden}.w-fill{height:100%;background:${theme.color};transition:width .3s}.w-wx{position:absolute;top:6px;right:6px;font-size:.6rem;color:#888}.w-ft{position:absolute;color:#fff;font-weight:bold;font-size:.7rem;pointer-events:none;animation:fu .7s forwards;text-shadow:0 0 4px #000;z-index:20}@keyframes fu{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-25px)}}.w-pt{position:absolute;width:4px;height:4px;background:var(--pc);border-radius:50%;pointer-events:none;animation:pt .6s forwards}@keyframes pt{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0) translateY(-20px)}}.w-bb{position:absolute;background:#fff;color:#000;padding:4px 8px;border-radius:8px;font-size:.6rem;max-width:120px;text-align:center;animation:bf 2s forwards;z-index:15;box-shadow:0 2px 8px rgba(0,0,0,.3)}.w-bb::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);border-width:4px 4px 0;border-style:solid;border-color:#fff transparent transparent transparent}@keyframes bf{0%{opacity:0;transform:translateY(5px)}10%{opacity:1;transform:translateY(0)}90%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}.w-ach{position:absolute;bottom:6px;left:6px;background:linear-gradient(90deg,#0f42,#0a44);border:1px solid ${theme.color};padding:2px 5px;font-size:.55rem;color:${theme.color};border-radius:2px;animation:as .5s ease-out}@keyframes as{0%{transform:translateX(-100%)}100%{transform:translateX(0)}}.w-feed{position:absolute;bottom:6px;right:6px;background:#222;border:1px solid #444;color:#aaa;padding:2px 5px;font-size:.5rem;cursor:pointer;border-radius:2px}.w-feed:hover{background:#333;color:#fff}</style>
+<div class="w-host" id="wh_${safe}">
+<div class="w-ui" id="wu_${safe}"><div>LVL:1|XP:0</div><div class="w-bar"><div class="w-fill" id="bh_${safe}" style="width:100%"></div></div><div class="w-bar"><div class="w-fill" id="be_${safe}" style="width:100%"></div></div><div class="w-bar"><div class="w-fill" id="bl_${safe}" style="width:100%"></div></div></div>
+<div class="w-wx" id="ww_${safe}">☀️</div>
+<div id="w_${safe}" class="w-pet idle">${WOLF_SVG}</div>
+<button class="w-feed" onclick="this.closest('.w-host').__feed()">RACIÓN</button>
+</div>
 <script>(function(){
-var h=document.getElementById('wh_${safe}'),w=document.getElementById('w_${safe}'),u=document.getElementById('wu_${safe}'),wx=document.getElementById('ww_${safe}'),
-k='wp_${safe}',s=JSON.parse(localStorage.getItem(k)||'{"l":1,"x":0,"h":100,"e":100,"c":0}'),
-p={x:s.x||h.clientWidth-80,y:s.y||h.clientHeight-70},v={x:2,y:1},d=false,do_={x:0,y:0},sp=${speed},cr=${changeRate},
-mt=0,wt=0,night=false,ach=s.ach||[];
-function sv(){localStorage.setItem(k,JSON.stringify({l:s.l,x:p.x,y:p.y,h:s.h,e:s.e,c:s.c,ach:ach}))}
+var h=document.getElementById('wh_${safe}'),w=document.getElementById('w_${safe}'),u=document.getElementById('wu_${safe}'),
+bh=document.getElementById('bh_${safe}'),be=document.getElementById('be_${safe}'),bl=document.getElementById('bl_${safe}'),
+wx=document.getElementById('ww_${safe}'),k='wp_${safe}',
+s=JSON.parse(localStorage.getItem(k)||'{"l":1,"x":0,"h":100,"e":100,"lo":100,"c":0,"ach":[]}'),
+p={x:s.x||h.clientWidth-80,y:s.y||h.clientHeight-70},v={x:0,y:0},d=false,do_={x:0,y:0},
+ms=${phys.maxSpd},ac=${phys.accel},fr=${phys.friction},tr=${phys.turnRate},loy=${isLoyalty},
+mt=0,wt=0,night=false,m={x:h.clientWidth/2,y:h.clientHeight/2},ach=s.ach||[];
+function sv(){localStorage.setItem(k,JSON.stringify({l:s.l,x:p.x,y:p.y,h:s.h,e:s.e,lo:s.lo,c:s.c,ach:ach}))}
 function ft(t,x,y){var e=document.createElement('div');e.className='w-ft';e.textContent=t;e.style.left=x+'px';e.style.top=y+'px';h.appendChild(e);setTimeout(()=>e.remove(),700)}
-function pt(x,y){for(var i=0;i<5;i++){var e=document.createElement('div');e.className='w-pt';e.style.left=(x+Math.random()*30)+'px';e.style.top=(y+Math.random()*30)+'px';h.appendChild(e);setTimeout(()=>e.remove(),600)}}
+function pt(x,y){for(var i=0;i<6;i++){var e=document.createElement('div');e.className='w-pt';e.style.left=(x+Math.random()*40-20)+'px';e.style.top=(y+Math.random()*40-20)+'px';h.appendChild(e);setTimeout(()=>e.remove(),600)}}
 function bb(t,x,y){var e=document.createElement('div');e.className='w-bb';e.textContent=t;e.style.left=(x-40)+'px';e.style.top=(y-30)+'px';h.appendChild(e);setTimeout(()=>e.remove(),2000)}
-function ach_(id,n,d){if(ach.includes(id))return;ach.push(id);var e=document.createElement('div');e.className='w-ach';e.innerHTML='🏆 '+n;h.appendChild(e);setTimeout(()=>e.remove(),3000)}
-function up(){u.textContent='LVL:'+s.l+'|XP:'+(s.x||0)+'|H:'+Math.floor(s.h||100)+'%';wx.textContent=night?'🌙':'️'}
+function ach_(id,n){if(ach.includes(id))return;ach.push(id);var e=document.createElement('div');e.className='w-ach';e.innerHTML='🏆 '+n;h.appendChild(e);setTimeout(()=>e.remove(),3000)}
+function up(){u.querySelector('div').textContent='LVL:'+s.l+'|XP:'+(s.x||0);bh.style.width=Math.max(0,s.h||100)+'%';be.style.width=Math.max(0,s.e||100)+'%';bl.style.width=Math.max(0,s.lo||100)+'%';wx.textContent=night?'🌙':'☀️'}
+h.addEventListener('mousemove',function(e){var r=h.getBoundingClientRect();m.x=e.clientX-r.left;m.y=e.clientY-r.top});
+h.__feed=function(){s.h=Math.min(100,(s.h||100)+25);ft('+25H',p.x+10,p.y-10,'#0f0');bb('*chews*',p.x+32,p.y);up()};
 var vls={N:['...','*sniff*'],H:['*wags*','Good!'],A:['*growl*','Grr...'],E:['*barks*','Go!'],S:['*zzz*','...'],G:['Food...','*whine*']};
-function mood(m){if(m==='H'){w.classList.add('happy');setTimeout(()=>w.classList.remove('happy'),400)}else if(m==='A')w.classList.add('angry');else if(m==='S')w.classList.add('sleep');else{w.classList.remove('happy','angry','sleep')}}
+function mood(md){if(md==='H'){w.classList.add('happy');setTimeout(()=>w.classList.remove('happy'),400)}else if(md==='A')w.classList.add('angry');else if(md==='S')w.classList.add('sleep');else{w.classList.remove('happy','angry','sleep')}}
 function loop(n){
-if(!d){if(Math.random()<cr){v.x=(Math.random()-.5)*sp;v.y=(Math.random()-.5)*sp;w.classList.toggle('hunt',Math.random()<.3)}
-p.x+=v.x*.016;p.y+=v.y*.016;
+if(!d){
+if(loy){var dx=m.x-(p.x+32),dy=m.y-(p.y+28),ds=Math.sqrt(dx*dx+dy*dy);
+if(ds>10){v.x+=(dx/ds)*ac*0.016*60;v.y+=(dy/ds)*ac*0.016*60;w.classList.toggle('hunt',ds<80);s.lo=Math.min(100,(s.lo||100)+0.008)}
+else{w.classList.remove('hunt');if(Math.random()<0.02)bb('*wags*',p.x+32,p.y)}}
+else{if(Math.random()<tr){v.x=(Math.random()-.5)*ms;v.y=(Math.random()-.5)*ms;w.classList.toggle('hunt',Math.random()<.3)}}
+v.x*=fr;v.y*=fr;var sp=Math.sqrt(v.x*v.x+v.y*v.y);if(sp>ms){v.x=(v.x/sp)*ms;v.y=(v.y/sp)*ms}
+p.x+=v.x*0.016;p.y+=v.y*0.016;
 var mx=h.clientWidth-64,my=h.clientHeight-56;
-if(p.x<=0){p.x=0;v.x*=-1}if(p.x>=mx){p.x=mx;v.x*=-1}
-if(p.y<=0){p.y=0;v.y*=-1}if(p.y>=my){p.y=my;v.y*=-1}
-s.h=Math.max(0,(s.h||100)-.02);s.e=Math.max(0,(s.e||100)-.01);
-mt+=.016;if(mt>8){mt=0;var ms=s.h<30?'G':s.e<20?'S':Math.random()<.4?'H':Math.random()<.2?'A':'N';mood(ms);var vl=vls[ms];if(vl&&Math.random()<.5)bb(vl[Math.floor(Math.random()*vl.length)],p.x+32,p.y)}
-wt+=.016;if(wt>30){wt=0;night=!night;h.style.filter=night?'brightness(0.6)':'brightness(1)';if(night)ach_('night_owl','Night Owl')}
-if(s.h<30)w.classList.add('sleep');else w.classList.remove('sleep');
-w.style.left=p.x+'px';w.style.top=p.y+'px';w.style.transform='scaleX('+(v.x>=0?1:-1)+')';w.classList.toggle('idle',Math.abs(v.x)<10);sv();up()}
+if(p.x<=0){p.x=0;v.x*=-0.5}if(p.x>=mx){p.x=mx;v.x*=-0.5}
+if(p.y<=0){p.y=0;v.y*=-0.5}if(p.y>=my){p.y=my;v.y*=-0.5}
+s.h=Math.max(0,(s.h||100)-0.02);s.e=Math.max(0,(s.e||100)-0.01);
+mt+=0.016;if(mt>7){mt=0;var mk=s.h<25?'G':s.e<15?'S':Math.random()<.3?'H':Math.random()<.15?'A':'N';mood(mk);var vl=vls[mk];if(vl&&Math.random()<.4)bb(vl[Math.floor(Math.random()*vl.length)],p.x+32,p.y)}
+wt+=0.016;if(wt>25){wt=0;night=!night;h.style.filter=night?'brightness(0.6)':'brightness(1)';if(night)ach_('night_owl','Night Owl')}
+if(s.h<25)w.classList.add('sleep');else w.classList.remove('sleep');
+w.style.left=p.x+'px';w.style.top=p.y+'px';w.style.transform='scaleX('+(v.x>=0?1:-1)+')';w.classList.toggle('idle',Math.abs(v.x)<8);sv();up()}
 requestAnimationFrame(loop)}
 w.addEventListener('mousedown',function(e){d=true;var r=h.getBoundingClientRect();do_.x=e.clientX-r.left-p.x;do_.y=e.clientY-r.top-p.y;w.style.transition='none';w.classList.remove('idle')});
-window.addEventListener('mouseup',function(){if(d){d=false;w.style.transition='transform .1s';v.x=(Math.random()-.5)*50;v.y=(Math.random()-.5)*50}});
+window.addEventListener('mouseup',function(){if(d){d=false;w.style.transition='transform .1s'}});
 window.addEventListener('mousemove',function(e){if(!d)return;var r=h.getBoundingClientRect();p.x=e.clientX-r.left-do_.x;p.y=e.clientY-r.top-do_.y;w.style.left=p.x+'px';w.style.top=p.y+'px'});
-w.addEventListener('click',function(e){if(d)return;s.c=(s.c||0)+1;if(s.c>=50)ach_('clicks50','Dedicated','50 clicks');
+w.addEventListener('click',function(e){if(d)return;s.c=(s.c||0)+1;if(s.c>=50)ach_('clicks50','Dedicated');
 var r=w.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;pt(x,y);
-var a=[{t:'PET +5',x:5,h:-2,e:5,m:'H',v:'*happy*'},{t:'FEED +15',x:10,h:20,e:-3,m:'H',v:'*nom*'},{t:'TRAIN +20',x:20,h:-8,e:-12,m:'E',v:'Go!'}],c=a[Math.floor(Math.random()*a.length)];
-s.x=(s.x||0)+c.x;s.h=Math.min(100,(s.h||100)+c.h);s.e=Math.min(100,(s.e||100)+c.e);mood(c.m);bb(c.v,p.x+32,p.y);
+var a=[{t:'PET +5',x:5,h:-2,e:5,m:'H',v:'*happy*',l:2},{t:'FEED +15',x:10,h:20,e:-3,m:'H',v:'*nom*',l:0},{t:'TRAIN +20',x:20,h:-8,e:-12,m:'E',v:'Go!',l:5}],c=a[Math.floor(Math.random()*a.length)];
+s.x=(s.x||0)+c.x;s.h=Math.min(100,(s.h||100)+c.h);s.e=Math.min(100,(s.e||100)+c.e);s.lo=Math.min(100,(s.lo||100)+c.l);mood(c.m);bb(c.v,p.x+32,p.y);
 if(s.x>=s.l*50){s.l++;s.x=0;ft('LEVEL UP!',p.x+10,p.y-30,'#0f0');for(var i=0;i<15;i++)setTimeout(()=>pt(p.x+32,p.y+28),i*40);if(s.l===5)ach_('lvl5','Veteran');if(s.l===10)ach_('lvl10','Alpha')}
 else ft(c.t,p.x+10,p.y-10,'#fff');w.classList.add('wag');setTimeout(()=>w.classList.remove('wag'),600);up()});
 if(s.l>=5)ach_('lvl5','Veteran');if(s.l>=10)ach_('lvl10','Alpha');
@@ -389,44 +433,37 @@ up();requestAnimationFrame(loop);
 })();<\/script><!-- END -->`;
     
     document.getElementById('embed-text').textContent = embed;
-    codeGenerated = true;
   }
 
   function copyToClipboard(){
     const text = document.getElementById('embed-text').textContent;
-    if(!codeGenerated || text.includes('[')){
+    // FIX: Direct string comparison, no flags needed
+    if(text === '[CÓDIGO EMBED AQUÍ]') {
       alert('⚠️ Genera el código primero pulsando "GENERAR EMBED"');
       return;
     }
     navigator.clipboard.writeText(text).then(()=>{
       const btn = document.querySelector('.copy-btn');
-      const original = btn.textContent;
       btn.textContent = '✓ COPIADO';
       btn.style.background = '#00ff41';
       btn.style.color = '#000';
       btn.style.borderColor = '#00ff41';
       setTimeout(()=>{
-        btn.textContent = original;
+        btn.textContent = 'COPIAR';
         btn.style.background = '#222';
         btn.style.color = '#aaa';
         btn.style.borderColor = '#444';
       }, 2000);
-    }).catch(err=>{
+    }).catch(()=>{
       const ta = document.createElement('textarea');
       ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
       document.body.appendChild(ta);
       ta.select();
-      try{
-        document.execCommand('copy');
-        const btn = document.querySelector('.copy-btn');
-        btn.textContent = '✓ COPIADO';
-        setTimeout(()=>btn.textContent='COPIAR',2000);
-      }catch(e){
-        alert('Error al copiar. Selecciona y copia manualmente.');
-      }
+      document.execCommand('copy');
       document.body.removeChild(ta);
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '✓ COPIADO';
+      setTimeout(()=>btn.textContent='COPIAR',2000);
     });
   }
 
